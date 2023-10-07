@@ -41,7 +41,7 @@ def get_info_gain_and_entropy(examples, attribute):
     return info_gain, weighted_entropy
 
 
-def ID3(examples, default):
+def ID3(examples, default, missing_values="keep"):
     """
     Takes in an array of examples, and returns a tree (an instance of Node)
     trained on the examples.  Each example is a dictionary of attribute:value
@@ -84,11 +84,14 @@ def ID3(examples, default):
     )
 
     # recursively create child nodes based on the best attribute values
-    best_attribute_values = set(
-        example[best_attribute]
-        for example in examples
-        if example[best_attribute] != "?"  # ignore missing examples
-    )
+    if missing_values == "ignore":
+        best_attribute_values = set(
+            example[best_attribute]
+            for example in examples
+            if example[best_attribute] != "?"
+        )
+    elif missing_values == "keep":
+        best_attribute_values = set(example[best_attribute] for example in examples)
     for best_attribute_value in best_attribute_values:
         child_examples = [
             example
