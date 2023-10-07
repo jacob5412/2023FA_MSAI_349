@@ -87,7 +87,7 @@ def ID3(examples, default):
     best_attribute_values = set(
         example[best_attribute]
         for example in examples
-        if example[best_attribute] != "?"
+        if example[best_attribute] != "?"  # ignore missing examples
     )
     for best_attribute_value in best_attribute_values:
         child_examples = [
