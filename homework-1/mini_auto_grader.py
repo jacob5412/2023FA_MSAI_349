@@ -1,7 +1,7 @@
-import random
-
+"""
+Auto-Grader to test code.
+"""
 import ID3
-import parse
 
 
 def mini_grader():
@@ -17,8 +17,8 @@ def mini_grader():
                 print("ID3 test 1 succeeded.")
         else:
             print("ID3 test 1 failed -- no tree returned")
-    except Exception:
-        print("ID3 test 1 failed runtime error")
+    except Exception as e:
+        print(f"ID3 test 1 failed runtime error: {e}")
 
     data = [dict(a=1, b=0, Class=0), dict(a=1, b=1, Class=1)]
 
@@ -32,8 +32,8 @@ def mini_grader():
                 print("ID3 test 2 succeeded.")
         else:
             print("ID3 test 2 failed -- no tree returned")
-    except Exception:
-        print("ID3 test 2 failed runtime error")
+    except Exception as e:
+        print(f"ID3 test 2 failed runtime error: {e}")
 
     data = [
         dict(a=1, b=0, Class=2),
@@ -59,8 +59,8 @@ def mini_grader():
                 print("ID3 test 3-2 succeeded.")
         else:
             print("ID3 test 3 failed -- no tree returned")
-    except Exception:
-        print("ID3 test 3 failed runtime error")
+    except Exception as e:
+        print(f"ID3 test 3 failed runtime error: {e}")
 
     data = [
         dict(a=1, b=0, c="?", Class=1),
@@ -86,8 +86,8 @@ def mini_grader():
                 print("ID3 test 4-2 succeeded.")
         else:
             print("ID3 test 4 failed -- no tree returned")
-    except Exception:
-        print("ID3 test 4 failed runtime error")
+    except Exception as e:
+        print(f"ID3 test 4 failed runtime error: {e}")
 
 
 if __name__ == "__main__":
