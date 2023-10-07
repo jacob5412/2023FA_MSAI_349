@@ -117,7 +117,14 @@ def test(node, examples):
     Takes in a trained tree and a test set of examples.  Returns the accuracy
     (fraction of examples the tree classifies correctly).
     """
-    pass
+    num_correct_predictions = 0
+    # compare predicted class label with ground truth
+    # TODO: Vectorize this
+    for example in examples:
+        y_hat = evaluate(node, example)
+        if y_hat == example["Class"]:
+            num_correct_predictions += 1
+    return num_correct_predictions / len(examples) # accuracy
 
 
 def evaluate(node, example):
