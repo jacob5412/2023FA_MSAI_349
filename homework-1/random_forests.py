@@ -23,7 +23,8 @@ class RandomForests:
 
     def fit_random_forests(self, examples, default):
         """
-        Fits the random forest to a dataset using bootstrapped samples and creates decision trees.
+        Fits the random forest to a dataset using bootstrapped samples and
+        creates decision trees.
         """
         for _ in range(self.num_trees):
             # create a boostrapped sample by randomly selecting an example n
