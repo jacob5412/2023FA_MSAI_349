@@ -14,10 +14,6 @@ class Node:
                            the majority class if it's a non-leaf node.
         children (dict of Node): Dictionary of child nodes of the
                                  form {attribute_value:child_node}.
-        parent (Node): A reference to the parent node.
-        depth (int): The depth of this node in the tree (for pruning).
-        entropy (float): The entropy of data at this node.
-        info_gain (float): The information gain at this node.
         is_leaf (bool): True if it's a leaf node, False otherwise.
     """
 
@@ -32,17 +28,7 @@ class Node:
         self.attribute_value = attribute_value
         self.class_label = class_label
         self.children = {}
-        self.parent = None
-        self.depth = 0
-        self.entropy = None
-        self.info_gain = None
         self.is_leaf = is_leaf
-
-    def is_root(self):
-        """
-        Returns True if root node, False otherwise.
-        """
-        return self.parent is None
 
     def has_children(self):
         """
@@ -61,8 +47,6 @@ class Node:
         Add a child node to the current node with a given attribute value.
         """
         self.children[attribute_value] = child_node
-        child_node.parent = self
-        child_node.depth = self.depth + 1
 
     def get_attribute(self):
         """
@@ -75,13 +59,6 @@ class Node:
         Updates attribute of current node.
         """
         self.attribute = attribute
-
-    def update_info_gain_and_entropy(self, info_gain, entropy):
-        """
-        Updates information gain and entropy of current node.
-        """
-        self.info_gain = info_gain
-        self.entropy = entropy
 
     def update_as_leaf(self, is_leaf=True):
         """
