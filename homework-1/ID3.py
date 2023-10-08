@@ -1,3 +1,6 @@
+"""
+Implementation of the ID3 algorithm
+"""
 import math
 from collections import Counter
 

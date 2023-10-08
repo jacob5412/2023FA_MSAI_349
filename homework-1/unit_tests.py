@@ -1,3 +1,6 @@
+"""
+Unit Tests
+"""
 import random
 
 import ID3
@@ -6,6 +9,9 @@ from random_forests import RandomForests
 
 
 def testID3AndEvaluate():
+    """
+    Test the ID3 algorithm and evaluate its correctness.
+    """
     data = [dict(a=1, b=0, Class=1), dict(a=1, b=1, Class=1)]
     tree = ID3.ID3(data, 0)
     if tree != None:
@@ -19,8 +25,9 @@ def testID3AndEvaluate():
 
 
 def testPruning():
-    # data = [dict(a=1, b=1, c=1, Class=0), dict(a=1, b=0, c=0, Class=0), dict(a=0, b=1, c=0, Class=1), dict(a=0, b=0, c=0, Class=1), dict(a=0, b=0, c=1, Class=0)]
-    # validationData = [dict(a=0, b=0, c=1, Class=1)]
+    """
+    Test the pruning of an ID3 decision tree.
+    """
     data = [
         dict(a=0, b=1, c=1, d=0, Class=1),
         dict(a=0, b=0, c=1, d=0, Class=0),
@@ -47,6 +54,9 @@ def testPruning():
 
 
 def testID3AndTest():
+    """
+    Test the ID3 algorithm's accuracy on training and test data.
+    """
     trainData = [
         dict(a=1, b=0, c=0, Class=1),
         dict(a=1, b=1, c=0, Class=1),
@@ -84,10 +94,13 @@ def testID3AndTest():
 
 # inFile - string location of the house data file
 def testPruningOnHouseData(inFile):
+    """
+    Test pruning of ID3 on a dataset of house data.
+    """
     withPruning = []
     withoutPruning = []
     data = parse.parse(inFile)
-    for i in range(100):
+    for _ in range(100):
         random.shuffle(data)
         train = data[: len(data) // 2]
         valid = data[len(data) // 2 : 3 * len(data) // 4]
@@ -124,6 +137,9 @@ def testPruningOnHouseData(inFile):
 
 
 def testRandomForestsOnHouseData(inFile):
+    """
+    Test the Random Forests algorithm on a dataset of house data.
+    """
     print("\nRandom Forests on House Data:")
     data = parse.parse(inFile)
     train = data[: len(data) // 2]
