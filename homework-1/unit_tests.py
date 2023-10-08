@@ -120,3 +120,10 @@ def testPruningOnHouseData(inFile):
         " without: ",
         sum(withoutPruning) / len(withoutPruning),
     )
+
+
+if __name__ == "__main__":
+    testID3AndEvaluate()
+    testPruning()
+    testID3AndTest()
+    testPruningOnHouseData(inFile='house_votes_84.data')

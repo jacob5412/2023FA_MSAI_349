@@ -10,7 +10,8 @@ class Node:
     Attributes:
         attribute (str): The attribute on which the data is split.
         attribute_value (str): The value of the attribute for this node.
-        class_label (str): The class label if it's leaf node.
+        class_label (str): The class label if it's leaf node, otherwise
+                           the majority class if it's a non-leaf node.
         children (dict of Node): Dictionary of child nodes of the
                                  form {attribute_value:child_node}.
         parent (Node): A reference to the parent node.
