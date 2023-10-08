@@ -1,24 +1,24 @@
 """
-Implementation of the random forests algorithm.
+Implementation of the random forest algorithm.
 """
 import random
 
 import ID3
 
 
-class RandomForests:
+class RandomForest:
     """
-    Random Forests - an ensemble learning technique that builds multiple trees.
+    Random Forest - an ensemble learning technique that builds multiple trees.
     Here, we're building trees using bootstrapping (sampling with replacement)
 
     Attributes:
-        random_forests_nodes (list): A list to store the decision tree nodes
+        random_forest_nodes (list): A list to store the decision tree nodes
                                      in the random forest.
         num_trees (int): The number of decision trees in the random forest.
     """
 
     def __init__(self, num_trees):
-        self.random_forests_nodes = []
+        self.random_forest_nodes = []
         self.num_trees = num_trees
 
     def fit(self, examples, default):
@@ -31,8 +31,8 @@ class RandomForests:
             # times; with replacement, i.e., can select one example more than
             # once; n = len(examples)
             bootstrap_sample = [random.choice(examples) for _ in range(len(examples))]
-            random_forests_node = ID3.ID3(bootstrap_sample, default)
-            self.random_forests_nodes.append(random_forests_node)
+            random_forest_node = ID3.ID3(bootstrap_sample, default)
+            self.random_forest_nodes.append(random_forest_node)
 
     def test(self, examples):
         """
@@ -49,7 +49,7 @@ class RandomForests:
         decision trees.
         """
         predictions = [
-            ID3.evaluate(random_forests_node, example)
-            for random_forests_node in self.random_forests_nodes
+            ID3.evaluate(random_forest_node, example)
+            for random_forest_node in self.random_forest_nodes
         ]
         return ID3.get_most_common_class(predictions)
