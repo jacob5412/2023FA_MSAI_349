@@ -126,8 +126,7 @@ def testPruningOnHouseData(inFile):
         acc = ID3.test(tree, test)
         print("no pruning test accuracy: ", acc)
         withoutPruning.append(acc)
-    print(withPruning)
-    print(withoutPruning)
+
     print(
         "average with pruning",
         sum(withPruning) / len(withPruning),
@@ -135,6 +134,88 @@ def testPruningOnHouseData(inFile):
         sum(withoutPruning) / len(withoutPruning),
     )
 
+# inFile - string location of the candy data file
+def testPruningCandyData(inFile):
+    """
+    Test pruning of ID3 on a dataset of candy data.
+    """
+    withPruning = []
+    withoutPruning = []
+    data = parse.parse(inFile)
+    for _ in range(100):
+        random.shuffle(data)
+        train = data[: len(data) // 2]
+        valid = data[len(data) // 2 : 3 * len(data) // 4]
+        test = data[3 * len(data) // 4 :]
+
+        tree = ID3.ID3(train, 0)
+        acc = ID3.test(tree, train)
+        print("training accuracy: ", acc)
+        acc = ID3.test(tree, valid)
+        print("validation accuracy: ", acc)
+        acc = ID3.test(tree, test)
+        print("test accuracy: ", acc)
+
+        ID3.prune(tree, valid)
+        acc = ID3.test(tree, train)
+        print("pruned tree train accuracy: ", acc)
+        acc = ID3.test(tree, valid)
+        print("pruned tree validation accuracy: ", acc)
+        acc = ID3.test(tree, test)
+        print("pruned tree test accuracy: ", acc)
+        withPruning.append(acc)
+        tree = ID3.ID3(train + valid, "democrat")
+        acc = ID3.test(tree, test)
+        print("no pruning test accuracy: ", acc)
+        withoutPruning.append(acc)
+
+    print(
+        "average with pruning",
+        sum(withPruning) / len(withPruning),
+        " without: ",
+        sum(withoutPruning) / len(withoutPruning),
+    )
+
+# inFile - string location of the candy data file
+def testPruningTennisData(inFile):
+    """
+    Test pruning of ID3 on a dataset of tennis data.
+    """
+    withPruning = []
+    withoutPruning = []
+    data = parse.parse(inFile)
+    for _ in range(100):
+        random.shuffle(data)
+        train = data[: len(data) // 2]
+        valid = data[len(data) // 2 : 3 * len(data) // 4]
+        test = data[3 * len(data) // 4 :]
+
+        tree = ID3.ID3(train, 0)
+        acc = ID3.test(tree, train)
+        print("training accuracy: ", acc)
+        acc = ID3.test(tree, valid)
+        print("validation accuracy: ", acc)
+        acc = ID3.test(tree, test)
+        print("test accuracy: ", acc)
+
+        ID3.prune(tree, valid)
+        acc = ID3.test(tree, train)
+        print("pruned tree train accuracy: ", acc)
+        acc = ID3.test(tree, valid)
+        print("pruned tree validation accuracy: ", acc)
+        acc = ID3.test(tree, test)
+        print("pruned tree test accuracy: ", acc)
+        withPruning.append(acc)
+        tree = ID3.ID3(train + valid, "democrat")
+        acc = ID3.test(tree, test)
+        print("no pruning test accuracy: ", acc)
+        withoutPruning.append(acc)
+    print(
+        "average with pruning",
+        sum(withPruning) / len(withPruning),
+        " without: ",
+        sum(withoutPruning) / len(withoutPruning),
+    )
 
 def testRandomForestOnHouseData(inFile):
     """
@@ -161,3 +242,5 @@ if __name__ == "__main__":
     testID3AndTest()
     testPruningOnHouseData(inFile="house_votes_84.data")
     testRandomForestOnHouseData(inFile="house_votes_84.data")
+    testPruningCandyData("candy.data")
+    testPruningTennisData("tennis.data")
