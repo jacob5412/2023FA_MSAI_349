@@ -137,10 +137,12 @@ def evaluate(node, example):
     Takes in a tree and one example. Returns the Class value that the tree
     assigns to the example.
     """
-    # recursively travese the tree, until you reach a leaf node
+    # recursively traverse the tree, until you reach a leaf node
     if node.is_leaf:
         return node.class_label
     node_attribute = node.get_attribute()
     example_attribute_value = example.get(node_attribute)
+    if example_attribute_value not in node.get_children():
+        return None
     child_node = node.children[example_attribute_value]
     return evaluate(child_node, example)
