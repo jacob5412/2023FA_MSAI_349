@@ -27,7 +27,7 @@ class RandomForests:
         creates decision trees.
         """
         for _ in range(self.num_trees):
-            # create a boostrapped sample by randomly selecting an example n
+            # create a bootstrapped sample by randomly selecting an example n
             # times; with replacement, i.e., can select one example more than
             # once; n = len(examples)
             bootstrap_sample = [random.choice(examples) for _ in range(len(examples))]
