@@ -41,20 +41,31 @@ def get_info_gain_and_entropy(examples, attribute):
     return info_gain, weighted_entropy
 
 
-def ID3(examples, default, missing_values="keep"):
+def ID3(examples, default):
     """
     Takes in an array of examples, and returns a tree (an instance of Node)
     trained on the examples.  Each example is a dictionary of attribute:value
     pairs, and the target class variable is a special attribute with the name
     "Class". Any missing attributes are denoted with a value of "?".
     """
-    attributes = default
-    if attributes == 0:
-        attributes = set(
-            attribute for attribute in examples[0].keys() if attribute != "Class"
-        )
+    if len(examples) == 0:
+        node = Node(default)
+        return node
+    attributes = set(
+        attribute for attribute in examples[0].keys() if attribute != "Class"
+    )
+    node = ID3_helper(examples, attributes)
+    return node
+
+
+def ID3_helper(examples, attributes, missing_values="keep"):
+    """
+    Recursively creates a decision tree.
+    """
     node = Node()
     class_labels = [example["Class"] for example in examples]
+
+    # this class label would be useful during pruning
     node.update_class_label(get_most_common_class(class_labels))
 
     # if all examples belong to the same class, update as leaf and return
@@ -112,7 +123,28 @@ def prune(node, examples):
     order to improve accuracy on the validation data; the precise pruning
     strategy is up to you.
     """
-    pass
+    accuracy_based_pruning(node, examples)
+
+
+def accuracy_based_pruning(node, examples):
+    """
+    Recursively prune a tree by cutting off children until accuracy on the
+    validation set stops improving.
+    """
+    if node.is_leaf:
+        return
+
+    for _, child_node in node.get_children():
+        accuracy_based_pruning(child_node, examples)
+
+    # Start pruning when recursion ends
+    pre_pruning_accuracy = test(node, examples)
+    node.is_leaf = True
+    post_pruning_accuracy = test(node, examples)
+
+    # only prune the tree if the accuracy is better
+    if post_pruning_accuracy <= pre_pruning_accuracy:
+        node.is_leaf = False
 
 
 def test(node, examples):
@@ -120,8 +152,6 @@ def test(node, examples):
     Takes in a trained tree and a test set of examples.  Returns the accuracy
     (fraction of examples the tree classifies correctly).
     """
-    node.display()
-
     # compare predicted class label with ground truth
     # TODO: Vectorize this
     num_correct_predictions = 0
@@ -137,10 +167,14 @@ def evaluate(node, example):
     Takes in a tree and one example. Returns the Class value that the tree
     assigns to the example.
     """
-    # recursively travese the tree, until you reach a leaf node
+    # recursively traverse the tree, until you reach a leaf node
     if node.is_leaf:
         return node.class_label
     node_attribute = node.get_attribute()
     example_attribute_value = example.get(node_attribute)
-    child_node = node.children[example_attribute_value]
+    child_node = node.children.get(example_attribute_value)
+    # if attribute value is missing or if tree is pruned
+    # class_label here is the majority class
+    if not child_node:
+        return node.class_label
     return evaluate(child_node, example)
