@@ -76,8 +76,9 @@ def ID3_helper(examples, attributes, missing_values="keep"):
         node.update_as_leaf()
         return node
 
-    # if no attributes remaining, update as leaf and use most common class
-    if not attributes:
+    # if no attributes remaining or if no examples remaining, update as leaf
+    # and use most common class
+    if not attributes or len(examples) == 0:
         node.update_as_leaf()
         return node
 
@@ -109,7 +110,7 @@ def ID3_helper(examples, attributes, missing_values="keep"):
         child_attributes = set(
             attribute for attribute in attributes if attribute != best_attribute
         )
-        child_node = ID3(child_examples, child_attributes)
+        child_node = ID3_helper(child_examples, child_attributes)
         node.add_child(best_attribute_value, child_node)
     return node
 
