@@ -2,6 +2,7 @@ import random
 
 import ID3
 import parse
+from random_forests import RandomForests
 
 
 def testID3AndEvaluate():
@@ -122,8 +123,25 @@ def testPruningOnHouseData(inFile):
     )
 
 
+def testRandomForestsOnHouseData(inFile):
+    print("\nRandom Forests on House Data:")
+    data = parse.parse(inFile)
+    train = data[: len(data) // 2]
+    valid = data[len(data) // 2 : 3 * len(data) // 4]
+    test = data[3 * len(data) // 4 :]
+    random_forests = RandomForests(num_trees=5)
+    random_forests.fit_random_forests(train, "democrat")
+    acc = random_forests.test(train)
+    print("training accuracy: ", acc)
+    acc = random_forests.test(valid)
+    print("validation accuracy: ", acc)
+    acc = random_forests.test(test)
+    print("testing accuracy: ", acc)
+
+
 if __name__ == "__main__":
     testID3AndEvaluate()
     testPruning()
     testID3AndTest()
-    testPruningOnHouseData(inFile='house_votes_84.data')
+    testPruningOnHouseData(inFile="house_votes_84.data")
+    testRandomForestsOnHouseData(inFile="house_votes_84.data")
