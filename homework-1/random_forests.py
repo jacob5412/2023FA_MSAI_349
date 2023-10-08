@@ -1,5 +1,5 @@
 """
-Implementation of the random forests algorithm
+Implementation of the random forests algorithm.
 """
 import random
 
@@ -21,7 +21,7 @@ class RandomForests:
         self.random_forests_nodes = []
         self.num_trees = num_trees
 
-    def fit_random_forests(self, examples, default):
+    def fit(self, examples, default):
         """
         Fits the random forest to a dataset using bootstrapped samples and
         creates decision trees.

@@ -130,7 +130,7 @@ def testRandomForestsOnHouseData(inFile):
     valid = data[len(data) // 2 : 3 * len(data) // 4]
     test = data[3 * len(data) // 4 :]
     random_forests = RandomForests(num_trees=5)
-    random_forests.fit_random_forests(train, "democrat")
+    random_forests.fit(train, "democrat")
     acc = random_forests.test(train)
     print("training accuracy: ", acc)
     acc = random_forests.test(valid)
