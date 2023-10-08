@@ -26,10 +26,9 @@ def get_entropy(examples):
     return entropy
 
 
-def get_info_gain_and_entropy(examples, attribute):
+def get_info_gain(examples, attribute):
     """
-    Return the information gain and entropy for a set of examples
-    and attributes.
+    Return the information gain for a set of examples and attributes.
     """
     parent_entropy = get_entropy(examples)
     attribute_values = set(example[attribute] for example in examples)
@@ -41,7 +40,7 @@ def get_info_gain_and_entropy(examples, attribute):
         child_entropy = get_entropy(child_examples)
         weighted_entropy += (len(child_examples) / len(examples)) * child_entropy
     info_gain = parent_entropy - weighted_entropy
-    return info_gain, weighted_entropy
+    return info_gain
 
 
 def ID3(examples, default):
@@ -83,20 +82,14 @@ def ID3_helper(examples, attributes, missing_values="keep"):
         return node
 
     # get best_attribute based on information gain (info_gain)
-    attribute_info_gain_and_entropy = {}
+    attribute_info_gain = {}
     for attribute in attributes:
-        attribute_info_gain_and_entropy[attribute] = get_info_gain_and_entropy(
-            examples, attribute
-        )
+        attribute_info_gain[attribute] = get_info_gain(examples, attribute)
     best_attribute = max(
-        attribute_info_gain_and_entropy,
-        key=lambda key: attribute_info_gain_and_entropy[key][0],
+        attribute_info_gain,
+        key=lambda key: attribute_info_gain[key],
     )
     node.update_attribute(best_attribute)
-    node.update_info_gain_and_entropy(
-        attribute_info_gain_and_entropy[best_attribute][0],
-        attribute_info_gain_and_entropy[best_attribute][1],
-    )
 
     # recursively create child nodes based on the best attribute values
     if missing_values == "ignore":
