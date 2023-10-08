@@ -132,6 +132,7 @@ def accuracy_based_pruning(node, examples):
     Recursively prune a tree by cutting off children until accuracy on the
     validation set stops improving.
     """
+    # stop once you reach the leaf, since you can't prune further
     if node.is_leaf:
         return
 
@@ -146,6 +147,7 @@ def accuracy_based_pruning(node, examples):
     # only prune the tree if the accuracy is better
     if post_pruning_accuracy <= pre_pruning_accuracy:
         node.is_leaf = False
+    return
 
 
 def test(node, examples):
@@ -154,12 +156,9 @@ def test(node, examples):
     (fraction of examples the tree classifies correctly).
     """
     # compare predicted class label with ground truth
-    # TODO: Vectorize this
-    num_correct_predictions = 0
-    for example in examples:
-        y_hat = evaluate(node, example)
-        if y_hat == example["Class"]:
-            num_correct_predictions += 1
+    num_correct_predictions = sum(
+        [evaluate(node, example) == example["Class"] for example in examples]
+    )
     return num_correct_predictions / len(examples)  # accuracy
 
 
