@@ -112,6 +112,7 @@ def plot_learning_curve_candy_data(dataset_filename):
 
 
 if __name__ == "__main__":
+    random.seed(101)
     plot_learning_curve_house_data(dataset_filename="house_votes_84.data")
     plot_learning_curve_tennis_data(dataset_filename="tennis.data")
     plot_learning_curve_candy_data(dataset_filename="candy.data")

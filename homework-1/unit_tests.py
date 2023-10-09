@@ -192,6 +192,7 @@ def testPruningTennisData(inFile):
 
 
 if __name__ == "__main__":
+    random.seed(120)
     testID3AndEvaluate()
     testPruning()
     testID3AndTest()

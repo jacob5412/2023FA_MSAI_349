@@ -78,12 +78,12 @@ def get_best_num_trees_for_random_forest(filename):
         accuracies = []
         for _ in range(25):
             random.shuffle(data)
-            train = data[: len(data) // 2]
-            valid = data[len(data) // 2 : 3 * len(data) // 4]
-            test = data[3 * len(data) // 4 :]
+            split_index = int(0.8 * len(data))
+            train = data[:split_index]
+            test = data[split_index:]
 
             random_forest = RandomForest(num_trees)
-            random_forest.fit(train + valid)
+            random_forest.fit(train)
             acc = random_forest.test(test)
             accuracies.append(acc)
         num_trees_accuracies[num_trees] = sum(accuracies) / len(accuracies)
@@ -191,6 +191,7 @@ def compare_accuracies_id3_rf(filename, num_trees):
 
 
 if __name__ == "__main__":
+    random.seed(101)
     best_num_trees = get_best_num_trees_for_random_forest("candy.data")
     learning_curves_random_forest_id3("candy.data", range(5, 68, 4), best_num_trees)
     compare_accuracies_id3_rf("candy.data", best_num_trees)
