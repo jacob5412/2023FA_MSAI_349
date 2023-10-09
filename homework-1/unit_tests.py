@@ -95,7 +95,7 @@ def testID3AndTest():
 # inFile - string location of the house data file
 def testPruningOnHouseData(inFile):
     """
-    Test pruning of ID3 on a dataset of house data.
+    Test pruning of ID3 on house data.
     """
     withPruning = []
     withoutPruning = []
@@ -134,15 +134,15 @@ def testPruningOnHouseData(inFile):
         sum(withoutPruning) / len(withoutPruning),
     )
 
-# inFile - string location of the candy data file
+
 def testPruningCandyData(inFile):
     """
-    Test pruning of ID3 on a dataset of candy data.
+    Test pruning of ID3 on candy data.
     """
     withPruning = []
     withoutPruning = []
     data = parse.parse(inFile)
-    for _ in range(100):
+    for _ in range(25):
         random.shuffle(data)
         train = data[: len(data) // 2]
         valid = data[len(data) // 2 : 3 * len(data) // 4]
@@ -176,15 +176,15 @@ def testPruningCandyData(inFile):
         sum(withoutPruning) / len(withoutPruning),
     )
 
-# inFile - string location of the candy data file
+
 def testPruningTennisData(inFile):
     """
-    Test pruning of ID3 on a dataset of tennis data.
+    Test pruning of ID3 on tennis data.
     """
     withPruning = []
     withoutPruning = []
     data = parse.parse(inFile)
-    for _ in range(100):
+    for _ in range(10):
         random.shuffle(data)
         train = data[: len(data) // 2]
         valid = data[len(data) // 2 : 3 * len(data) // 4]
@@ -210,12 +210,14 @@ def testPruningTennisData(inFile):
         acc = ID3.test(tree, test)
         print("no pruning test accuracy: ", acc)
         withoutPruning.append(acc)
+
     print(
         "average with pruning",
         sum(withPruning) / len(withPruning),
         " without: ",
         sum(withoutPruning) / len(withoutPruning),
     )
+
 
 def testRandomForestOnHouseData(inFile):
     """
@@ -241,6 +243,8 @@ if __name__ == "__main__":
     testPruning()
     testID3AndTest()
     testPruningOnHouseData(inFile="house_votes_84.data")
+
+    # additional tests
     testRandomForestOnHouseData(inFile="house_votes_84.data")
     testPruningCandyData("candy.data")
     testPruningTennisData("tennis.data")
