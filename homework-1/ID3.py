@@ -117,7 +117,7 @@ def ID3_helper(examples, attributes, missing_values="keep"):
 
 def prune(node, examples):
     """
-    Takes in a trained tree and a validation set of examples.  Prunes nodes in
+    Takes in a trained tree and a validation set of examples. Prunes nodes in
     order to improve accuracy on the validation data; the precise pruning
     strategy is up to you.
     """
@@ -149,7 +149,7 @@ def accuracy_based_pruning(node, examples):
 
 def test(node, examples):
     """
-    Takes in a trained tree and a test set of examples.  Returns the accuracy
+    Takes in a trained tree and a test set of examples. Returns the accuracy
     (fraction of examples the tree classifies correctly).
     """
     # compare predicted class label with ground truth
