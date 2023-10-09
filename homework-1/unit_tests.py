@@ -5,7 +5,6 @@ import random
 
 import ID3
 import parse
-from random_forest import RandomForest
 
 
 def testID3AndEvaluate():
@@ -92,7 +91,6 @@ def testID3AndTest():
         print("testID3andTest failed -- no tree returned.")
 
 
-# inFile - string location of the house data file
 def testPruningOnHouseData(inFile):
     """
     Test pruning of ID3 on house data.
@@ -149,24 +147,11 @@ def testPruningCandyData(inFile):
         test = data[3 * len(data) // 4 :]
 
         tree = ID3.ID3(train, 0)
-        acc = ID3.test(tree, train)
-        print("training accuracy: ", acc)
-        acc = ID3.test(tree, valid)
-        print("validation accuracy: ", acc)
-        acc = ID3.test(tree, test)
-        print("test accuracy: ", acc)
-
         ID3.prune(tree, valid)
-        acc = ID3.test(tree, train)
-        print("pruned tree train accuracy: ", acc)
-        acc = ID3.test(tree, valid)
-        print("pruned tree validation accuracy: ", acc)
         acc = ID3.test(tree, test)
-        print("pruned tree test accuracy: ", acc)
         withPruning.append(acc)
-        tree = ID3.ID3(train + valid, "democrat")
+        tree = ID3.ID3(train + valid, 0)
         acc = ID3.test(tree, test)
-        print("no pruning test accuracy: ", acc)
         withoutPruning.append(acc)
 
     print(
@@ -191,24 +176,11 @@ def testPruningTennisData(inFile):
         test = data[3 * len(data) // 4 :]
 
         tree = ID3.ID3(train, 0)
-        acc = ID3.test(tree, train)
-        print("training accuracy: ", acc)
-        acc = ID3.test(tree, valid)
-        print("validation accuracy: ", acc)
-        acc = ID3.test(tree, test)
-        print("test accuracy: ", acc)
-
         ID3.prune(tree, valid)
-        acc = ID3.test(tree, train)
-        print("pruned tree train accuracy: ", acc)
-        acc = ID3.test(tree, valid)
-        print("pruned tree validation accuracy: ", acc)
         acc = ID3.test(tree, test)
-        print("pruned tree test accuracy: ", acc)
         withPruning.append(acc)
-        tree = ID3.ID3(train + valid, "democrat")
+        tree = ID3.ID3(train + valid, 0)
         acc = ID3.test(tree, test)
-        print("no pruning test accuracy: ", acc)
         withoutPruning.append(acc)
 
     print(
@@ -219,32 +191,15 @@ def testPruningTennisData(inFile):
     )
 
 
-def testRandomForestOnHouseData(inFile):
-    """
-    Test the Random Forest algorithm on a dataset of house data.
-    """
-    print("\nRandom Forest on House Data:")
-    data = parse.parse(inFile)
-    train = data[: len(data) // 2]
-    valid = data[len(data) // 2 : 3 * len(data) // 4]
-    test = data[3 * len(data) // 4 :]
-    random_forest = RandomForest(num_trees=5)
-    random_forest.fit(train, "democrat")
-    acc = random_forest.test(train)
-    print("training accuracy: ", acc)
-    acc = random_forest.test(valid)
-    print("validation accuracy: ", acc)
-    acc = random_forest.test(test)
-    print("testing accuracy: ", acc)
-
-
 if __name__ == "__main__":
     testID3AndEvaluate()
     testPruning()
     testID3AndTest()
-    testPruningOnHouseData(inFile="house_votes_84.data")
+    print("\nTest Pruning on House Votes Data:")
+    testPruningOnHouseData("house_votes_84.data")
 
     # additional tests
-    testRandomForestOnHouseData(inFile="house_votes_84.data")
+    print("\nTest Pruning on Candy Data:")
     testPruningCandyData("candy.data")
+    print("\nTest Pruning on Tennis Data:")
     testPruningTennisData("tennis.data")

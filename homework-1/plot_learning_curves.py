@@ -5,8 +5,9 @@ tennis data.
 import math
 import random
 
-import ID3
 import matplotlib.pyplot as plt
+
+import ID3
 import parse
 
 
@@ -51,13 +52,13 @@ def plot_learning_curve(
 def calculate_accuracy_for_plot(
     dataset_filename, training_sizes, loop_size, dataset_name
 ):
+    data = parse.parse(dataset_filename)
     avg_test_accuracy_with_pruning = []
     avg_test_accuracy_without_pruning = []
 
     for train_size in training_sizes:
         with_pruning = []
         without_pruning = []
-        data = parse.parse(dataset_filename)
 
         for _ in range(loop_size):
             random.shuffle(data)
