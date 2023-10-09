@@ -71,20 +71,3 @@ class Node:
         Update class label of current node.
         """
         self.class_label = class_label
-
-    def display(self, indent=0):
-        """
-        (Debugging) Displays a node and its children.
-        """
-        prefix = "  " * indent
-        if self.is_leaf:
-            print(f"| {prefix}└─Class: {self.class_label}")
-        else:
-            print(
-                f"{'|' if indent != 0 else ''}{prefix}"
-                + f"{'└─' if indent != 0 else ''}"
-                + f"Attribute: {self.get_attribute()}"
-            )
-            for value, child_node in self.get_children():
-                print(f"|{prefix} └─Value {value}:")
-                child_node.display(indent + 1)
