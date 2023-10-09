@@ -37,13 +37,13 @@ def plot_random_forest_id3_accuracies(
     plt.plot(
         training_sizes,
         avg_test_accuracy_rf,
-        label="RF",
+        label="Random Forest",
         color="green",
     )
     plt.xlabel("Number of Training Examples")
     plt.ylabel("Average Accuracy on Test Data")
     plt.title(
-        f"Learning Curves for {dataset_name} Data - ID3 (With and Without Pruning) vs RF"
+        f"Learning Curves for {dataset_name} Data - ID3 (With and Without Pruning) vs Random Forest"
     )
     plt.legend()
     plt.grid(True)
@@ -62,7 +62,7 @@ def plot_num_trees_accuracies(accuracies_dict):
     plt.plot(trees, accuracy, marker="o", linestyle="-")
     plt.title("Random Forest Accuracy vs. Number of Trees")
     plt.xlabel("Number of Trees")
-    plt.ylabel("Accuracy")
+    plt.ylabel("Average Accuracy on Test Data")
     plt.grid(True)
     plt.savefig("images/rf_num_trees_accuracies.png", bbox_inches="tight")
 
@@ -74,7 +74,7 @@ def get_best_num_trees_for_random_forest(filename):
     data = parse.parse(filename)
     num_trees_accuracies = {}
 
-    for num_trees in range(1, 11):
+    for num_trees in range(2, 15):
         accuracies = []
         for _ in range(25):
             random.shuffle(data)
@@ -83,7 +83,7 @@ def get_best_num_trees_for_random_forest(filename):
             test = data[3 * len(data) // 4 :]
 
             random_forest = RandomForest(num_trees)
-            random_forest.fit(train + valid, 0)
+            random_forest.fit(train + valid)
             acc = random_forest.test(test)
             accuracies.append(acc)
         num_trees_accuracies[num_trees] = sum(accuracies) / len(accuracies)
@@ -127,7 +127,7 @@ def learning_curves_random_forest_id3(filename, training_sizes, num_trees):
             without_pruning.append(acc)
 
             random_forest = RandomForest(num_trees)
-            random_forest.fit(train + valid, 0)
+            random_forest.fit(train + valid)
             acc = random_forest.test(test)
             rf_acc.append(acc)
 
@@ -173,7 +173,7 @@ def compare_accuracies_id3_rf(filename, num_trees):
         without_pruning.append(acc)
 
         random_forest = RandomForest(num_trees)
-        random_forest.fit(train + valid, 0)
+        random_forest.fit(train + valid)
         acc = random_forest.test(test)
         rf_acc.append(acc)
     print(
@@ -192,5 +192,5 @@ def compare_accuracies_id3_rf(filename, num_trees):
 
 if __name__ == "__main__":
     best_num_trees = get_best_num_trees_for_random_forest("candy.data")
-    learning_curves_random_forest_id3("candy.data", range(5, 64, 4), best_num_trees)
+    learning_curves_random_forest_id3("candy.data", range(5, 68, 4), best_num_trees)
     compare_accuracies_id3_rf("candy.data", best_num_trees)

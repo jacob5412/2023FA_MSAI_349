@@ -21,7 +21,7 @@ class RandomForest:
         self.random_forest_nodes = []
         self.num_trees = num_trees
 
-    def fit(self, examples, default):
+    def fit(self, examples):
         """
         Fits the random forest to a dataset using bootstrapped samples and
         creates decision trees.
@@ -33,7 +33,16 @@ class RandomForest:
             bootstrap_sample = [
                 random.choice(examples) for _ in range(len(examples) + 1)
             ]
-            random_forest_node = ID3.ID3(bootstrap_sample, default)
+            available_attributes = [
+                attribute for attribute in examples[0].keys() if attribute != "Class"
+            ]
+            subset_attributes = set(
+                random.sample(
+                    available_attributes,
+                    random.randint(2, len(available_attributes)),
+                )
+            )
+            random_forest_node = ID3.ID3_helper(bootstrap_sample, subset_attributes)
             self.random_forest_nodes.append(random_forest_node)
 
     def test(self, examples):
