@@ -11,10 +11,8 @@ import parse
 from random_forest import RandomForest
 
 
-def plot_random_forest_id3_accuracies(
+def plot_random_forest_learning_curve(
     training_sizes,
-    avg_test_accuracy_id3_pruning,
-    avg_test_accuracy_id3_not_pruning,
     avg_test_accuracy_rf,
     dataset_name,
 ):
@@ -22,18 +20,6 @@ def plot_random_forest_id3_accuracies(
     Plot learning curves.
     """
     plt.figure(figsize=(10, 6))
-    plt.plot(
-        training_sizes,
-        avg_test_accuracy_id3_pruning,
-        label="ID3 (With Pruning)",
-        color="orange",
-    )
-    plt.plot(
-        training_sizes,
-        avg_test_accuracy_id3_not_pruning,
-        label="ID3 (Without Pruning)",
-        color="blue",
-    )
     plt.plot(
         training_sizes,
         avg_test_accuracy_rf,
@@ -74,7 +60,7 @@ def get_best_num_trees_for_random_forest(filename):
     data = parse.parse(filename)
     num_trees_accuracies = {}
 
-    for num_trees in range(2, 15):
+    for num_trees in range(2, 1):
         accuracies = []
         for _ in range(25):
             random.shuffle(data)
@@ -91,18 +77,14 @@ def get_best_num_trees_for_random_forest(filename):
     return max(num_trees_accuracies, key=lambda key: num_trees_accuracies[key])
 
 
-def learning_curves_random_forest_id3(filename, training_sizes, num_trees):
+def learning_curves_random_forest_id3(filename, training_sizes):
     """
-    Plot learning curves of RF and ID3 (with and without pruning)
+    Plot learning curves of RF over n number of trees
     """
     data = parse.parse(filename)
-    avg_test_accuracy_id3_pruning = []
-    avg_test_accuracy_id3_not_pruning = []
     avg_test_accuracy_rf = []
 
     for train_size in training_sizes:
-        with_pruning_acc = []
-        without_pruning = []
         rf_acc = []
 
         for _ in range(25):
@@ -117,31 +99,14 @@ def learning_curves_random_forest_id3(filename, training_sizes, num_trees):
                 train_size + validation_size : train_size + validation_size + test_size
             ]
 
-            tree = ID3.ID3(train, 0)
-            ID3.prune(tree, valid)
-            acc = ID3.test(tree, test)
-            with_pruning_acc.append(acc)
-
-            tree = ID3.ID3(train + valid, 0)
-            acc = ID3.test(tree, test)
-            without_pruning.append(acc)
-
             random_forest = RandomForest(num_trees)
             random_forest.fit(train + valid)
             acc = random_forest.test(test)
             rf_acc.append(acc)
 
-        avg_test_accuracy_id3_pruning.append(
-            sum(with_pruning_acc) / len(with_pruning_acc)
-        )
-        avg_test_accuracy_id3_not_pruning.append(
-            sum(without_pruning) / len(without_pruning)
-        )
         avg_test_accuracy_rf.append(sum(rf_acc) / len(rf_acc))
-    plot_random_forest_id3_accuracies(
+    plot_random_forest_learning_curve(
         training_sizes,
-        avg_test_accuracy_id3_pruning,
-        avg_test_accuracy_id3_not_pruning,
         avg_test_accuracy_rf,
         "Candy",
     )
@@ -192,5 +157,5 @@ def compare_accuracies_id3_rf(filename, num_trees):
 
 if __name__ == "__main__":
     best_num_trees = get_best_num_trees_for_random_forest("candy.data")
-    learning_curves_random_forest_id3("candy.data", range(5, 68, 4), best_num_trees)
+    learning_curves_random_forest("candy.data", range(5, 68, 4))
     compare_accuracies_id3_rf("candy.data", best_num_trees)
