@@ -30,7 +30,9 @@ class RandomForest:
             # create a bootstrapped sample by randomly selecting an example n
             # times; with replacement, i.e., can select one example more than
             # once; n = len(examples)
-            bootstrap_sample = [random.choice(examples) for _ in range(len(examples))]
+            bootstrap_sample = [
+                random.choice(examples) for _ in range(len(examples) + 1)
+            ]
             random_forest_node = ID3.ID3(bootstrap_sample, default)
             self.random_forest_nodes.append(random_forest_node)
 
