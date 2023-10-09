@@ -16,6 +16,9 @@ def plot_random_forest_id3_accuracies(
     avg_test_accuracy_id3_pruning,
     avg_test_accuracy_id3_not_pruning,
     avg_test_accuracy_rf,
+    avg_train_accuracy_id3_pruning,
+    avg_train_accuracy_id3_not_pruning,
+    avg_train_accuracy_rf,
     dataset_name,
 ):
     """
@@ -25,23 +28,44 @@ def plot_random_forest_id3_accuracies(
     plt.plot(
         training_sizes,
         avg_test_accuracy_id3_pruning,
-        label="ID3 (With Pruning)",
+        label="[Test] ID3 (With Pruning)",
         color="orange",
     )
     plt.plot(
         training_sizes,
         avg_test_accuracy_id3_not_pruning,
-        label="ID3 (Without Pruning)",
+        label="[Test] ID3 (Without Pruning)",
         color="blue",
     )
     plt.plot(
         training_sizes,
         avg_test_accuracy_rf,
-        label="Random Forest",
+        label="[Test] Random Forest",
         color="green",
     )
+    plt.plot(
+        training_sizes,
+        avg_train_accuracy_id3_pruning,
+        label="[Train] ID3 (With Pruning)",
+        color="orange",
+        linestyle="--",
+    )
+    plt.plot(
+        training_sizes,
+        avg_train_accuracy_id3_not_pruning,
+        label="[Train] ID3 (Without Pruning)",
+        color="blue",
+        linestyle="--",
+    )
+    plt.plot(
+        training_sizes,
+        avg_train_accuracy_rf,
+        label="[Train] Random Forest",
+        color="green",
+        linestyle="--",
+    )
     plt.xlabel("Number of Training Examples")
-    plt.ylabel("Average Accuracy on Test Data")
+    plt.ylabel("Average Accuracy")
     plt.title(
         f"Learning Curves for {dataset_name} Data - ID3 (With and Without Pruning) vs Random Forest"
     )
@@ -78,12 +102,12 @@ def get_best_num_trees_for_random_forest(filename):
         accuracies = []
         for _ in range(25):
             random.shuffle(data)
-            train = data[: len(data) // 2]
-            valid = data[len(data) // 2 : 3 * len(data) // 4]
-            test = data[3 * len(data) // 4 :]
+            split_index = int(0.8 * len(data))
+            train = data[:split_index]
+            test = data[split_index:]
 
             random_forest = RandomForest(num_trees)
-            random_forest.fit(train + valid)
+            random_forest.fit(train)
             acc = random_forest.test(test)
             accuracies.append(acc)
         num_trees_accuracies[num_trees] = sum(accuracies) / len(accuracies)
@@ -99,11 +123,17 @@ def learning_curves_random_forest_id3(filename, training_sizes, num_trees):
     avg_test_accuracy_id3_pruning = []
     avg_test_accuracy_id3_not_pruning = []
     avg_test_accuracy_rf = []
+    avg_train_accuracy_id3_pruning = []
+    avg_train_accuracy_id3_not_pruning = []
+    avg_train_accuracy_rf = []
 
     for train_size in training_sizes:
-        with_pruning_acc = []
-        without_pruning = []
-        rf_acc = []
+        with_pruning_acc_test = []
+        without_pruning_acc_test = []
+        rf_acc_test = []
+        with_pruning_acc_train = []
+        without_pruning_acc_train = []
+        rf_acc_train = []
 
         for _ in range(25):
             random.shuffle(data)
@@ -118,31 +148,47 @@ def learning_curves_random_forest_id3(filename, training_sizes, num_trees):
             ]
 
             tree = ID3.ID3(train, 0)
+            acc = ID3.test(tree, train)
+            with_pruning_acc_train.append(acc)
             ID3.prune(tree, valid)
             acc = ID3.test(tree, test)
-            with_pruning_acc.append(acc)
+            with_pruning_acc_test.append(acc)
 
             tree = ID3.ID3(train + valid, 0)
+            acc = ID3.test(tree, train + valid)
+            without_pruning_acc_train.append(acc)
             acc = ID3.test(tree, test)
-            without_pruning.append(acc)
+            without_pruning_acc_test.append(acc)
 
             random_forest = RandomForest(num_trees)
             random_forest.fit(train + valid)
+            acc = random_forest.test(train + valid)
+            rf_acc_train.append(acc)
             acc = random_forest.test(test)
-            rf_acc.append(acc)
+            rf_acc_test.append(acc)
 
         avg_test_accuracy_id3_pruning.append(
-            sum(with_pruning_acc) / len(with_pruning_acc)
+            sum(with_pruning_acc_test) / len(with_pruning_acc_test)
         )
         avg_test_accuracy_id3_not_pruning.append(
-            sum(without_pruning) / len(without_pruning)
+            sum(without_pruning_acc_test) / len(without_pruning_acc_test)
         )
-        avg_test_accuracy_rf.append(sum(rf_acc) / len(rf_acc))
+        avg_test_accuracy_rf.append(sum(rf_acc_test) / len(rf_acc_test))
+        avg_train_accuracy_id3_pruning.append(
+            sum(with_pruning_acc_train) / len(with_pruning_acc_train)
+        )
+        avg_train_accuracy_id3_not_pruning.append(
+            sum(without_pruning_acc_train) / len(without_pruning_acc_train)
+        )
+        avg_train_accuracy_rf.append(sum(rf_acc_train) / len(rf_acc_train))
     plot_random_forest_id3_accuracies(
         training_sizes,
         avg_test_accuracy_id3_pruning,
         avg_test_accuracy_id3_not_pruning,
         avg_test_accuracy_rf,
+        avg_train_accuracy_id3_pruning,
+        avg_train_accuracy_id3_not_pruning,
+        avg_train_accuracy_rf,
         "Candy",
     )
 
@@ -191,6 +237,7 @@ def compare_accuracies_id3_rf(filename, num_trees):
 
 
 if __name__ == "__main__":
+    random.seed(101)
     best_num_trees = get_best_num_trees_for_random_forest("candy.data")
     learning_curves_random_forest_id3("candy.data", range(5, 68, 4), best_num_trees)
     compare_accuracies_id3_rf("candy.data", best_num_trees)

@@ -18,6 +18,7 @@ class RandomForest:
     """
 
     def __init__(self, num_trees):
+        random.seed(101)
         self.random_forest_nodes = []
         self.num_trees = num_trees
 
@@ -57,7 +58,7 @@ class RandomForest:
     def evaluate(self, example):
         """
         Evaluates a single example using the random forest's ensemble of
-        decision trees.
+        decision trees. Use majority voting to predict the class.
         """
         predictions = [
             ID3.evaluate(random_forest_node, example)
