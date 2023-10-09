@@ -136,7 +136,7 @@ def accuracy_based_pruning(node, examples):
     for _, child_node in node.get_children():
         accuracy_based_pruning(child_node, examples)
 
-    # Start pruning when recursion ends
+    # Pruning starts once we reach the max depth
     pre_pruning_accuracy = test(node, examples)
     node.is_leaf = True
     post_pruning_accuracy = test(node, examples)
