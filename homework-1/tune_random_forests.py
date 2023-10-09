@@ -60,7 +60,7 @@ def get_best_num_trees_for_random_forest(filename):
     data = parse.parse(filename)
     num_trees_accuracies = {}
 
-    for num_trees in range(2, 1):
+    for num_trees in range(2, 16):
         accuracies = []
         for _ in range(25):
             random.shuffle(data)
@@ -77,9 +77,9 @@ def get_best_num_trees_for_random_forest(filename):
     return max(num_trees_accuracies, key=lambda key: num_trees_accuracies[key])
 
 
-def learning_curves_random_forest_id3(filename, training_sizes):
+def learning_curves_random_forest(filename, training_sizes):
     """
-    Plot learning curves of RF over n number of trees
+    Plot learning curves of Random Forest over n number of trees
     """
     data = parse.parse(filename)
     avg_test_accuracy_rf = []
