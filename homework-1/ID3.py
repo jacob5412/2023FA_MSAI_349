@@ -133,10 +133,11 @@ def accuracy_based_pruning(node, examples):
     if node.is_leaf:
         return
 
+    # get to the max depth recursively
     for _, child_node in node.get_children():
         accuracy_based_pruning(child_node, examples)
 
-    # Start pruning when recursion ends
+    # Pruning starts once we reach the max depth
     pre_pruning_accuracy = test(node, examples)
     node.is_leaf = True
     post_pruning_accuracy = test(node, examples)
@@ -167,10 +168,13 @@ def evaluate(node, example):
     # recursively traverse the tree, until you reach a leaf node
     if node.is_leaf:
         return node.class_label
+
     node_attribute = node.get_attribute()
     example_attribute_value = example.get(node_attribute)
     child_node = node.children.get(example_attribute_value)
-    # if attribute value is missing or if tree is pruned
+
+    # if attribute value is missing or if tree is pruned,
+    # we won't have children for certain attribute values,
     # class_label here is the majority class
     if not child_node:
         return node.class_label
