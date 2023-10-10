@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Set up Conda
-        uses: conda-incubator/setup-conda@v2
+        uses: conda-incubator/setup-miniconda
         with:
           python-version: anaconda3-2023.07-0
 

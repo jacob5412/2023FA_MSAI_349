@@ -25,7 +25,7 @@ jobs:
             ${{ runner.os }}-conda-
 
       - name: Set up Conda
-        uses: conda-incubator/setup-conda@v2
+        uses: conda-incubator/setup-miniconda
         with:
           python-version: anaconda3-2023.07-0
           activate-environment: myenv
