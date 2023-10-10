@@ -1,0 +1,36 @@
+name: Decision Trees Workflow
+
+on:
+  pull_request:
+    paths:
+      - "decision-trees/**"
+      - "requirements.txt"
+    branches:
+      - main
+
+jobs:
+  decision_trees:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Conda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-activate-base: true
+          activate-environment: ""
+
+      - name: Install Dependencies
+        run: |
+          pip3 install -r requirements.txt
+        working-directory: ./
+
+      - name: Run scripts
+        run: |
+          python3 mini_auto_grader.py
+          python3 unit_tests.py
+          python3 plot_learning_curves.py --no-plot
+          python3 tune_random_forest.py --no-plot
+        working-directory: ./decision-trees
