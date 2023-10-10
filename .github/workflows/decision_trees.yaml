@@ -1,0 +1,41 @@
+name: Decision Trees
+
+on:
+  pull_request:
+    paths:
+      - 'decision-tree/**'
+    branches:
+      - main
+
+jobs:
+  run_auto_grader:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest # You can choose a different runner if needed
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.11
+
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }} # Updated cache key
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt  # Adjust the requirements file name
+        working-directory: ./
+
+      - name: Run scripts
+        run: |
+          python /decision-trees/mini_auto_grader.py
+          python /decision-trees/unit_tests.py
+          python /decision-trees/plot_learning_curves.py --no-plot
+          python /decision-trees/tune_random_forest.py --no-plot
+        working-directory: ./
