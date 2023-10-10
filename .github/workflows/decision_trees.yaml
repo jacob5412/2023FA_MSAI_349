@@ -3,33 +3,37 @@ name: Decision Trees
 on:
   pull_request:
     paths:
-      - 'decision-trees/**'
+      - "decision-trees/**"
     branches:
       - main
 
 jobs:
   run_auto_grader:
     if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest # You can choose a different runner if needed
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.11
-
-      - name: Cache dependencies
+      - name: Cache Conda environments
         uses: actions/cache@v2
         with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }} # Updated cache key
+          path: ~/.conda/pkgs
+          key: ${{ runner.os }}-conda-${{ hashFiles('environment.yml') }} # Cache based on environment.yml file
+          restore-keys: |
+            ${{ runner.os }}-conda-
 
-      - name: Install dependencies
+      - name: Set up Conda
+        uses: conda-incubator/setup-conda@v2
+        with:
+          python-version: anaconda3-2023.07-0
+          activate-environment: myenv
+
+      - name: Create and activate Conda environment
         run: |
-          pip install -r requirements.txt  # Adjust the requirements file name
+          conda env create -f environment.yml  # Adjust the environment.yml file name
+          conda activate myenv
         working-directory: ./
 
       - name: Run scripts
