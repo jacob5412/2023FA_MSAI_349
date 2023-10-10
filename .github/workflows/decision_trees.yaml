@@ -31,6 +31,6 @@ jobs:
         run: |
           python3 mini_auto_grader.py
           python3 unit_tests.py
-          python3 plot_learning_curves.py
-          python3 tune_random_forest.py
+          python3 plot_learning_curves.py --no-plot
+          python3 tune_random_forest.py --no-plot
         working-directory: ./decision-trees
