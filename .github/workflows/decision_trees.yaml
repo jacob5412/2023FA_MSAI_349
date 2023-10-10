@@ -10,7 +10,7 @@ on:
 
 jobs:
   decision_trees:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     steps:
       - name: Checkout code
@@ -29,8 +29,8 @@ jobs:
 
       - name: Run scripts
         run: |
-          python /decision-trees/mini_auto_grader.py
-          python /decision-trees/unit_tests.py
-          python /decision-trees/plot_learning_curves.py
-          python /decision-trees/tune_random_forest.py
+          python decision-trees/mini_auto_grader.py
+          python decision-trees/unit_tests.py
+          python decision-trees/plot_learning_curves.py
+          python decision-trees/tune_random_forest.py
         working-directory: ./
