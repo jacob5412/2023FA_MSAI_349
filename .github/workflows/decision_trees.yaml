@@ -29,8 +29,8 @@ jobs:
 
       - name: Run scripts
         run: |
-          python decision-trees/mini_auto_grader.py
-          python decision-trees/unit_tests.py
-          python decision-trees/plot_learning_curves.py
-          python decision-trees/tune_random_forest.py
+          python3 decision-trees/mini_auto_grader.py
+          python3 decision-trees/unit_tests.py
+          python3 decision-trees/plot_learning_curves.py
+          python3 decision-trees/tune_random_forest.py
         working-directory: ./
