@@ -3,7 +3,7 @@ name: Decision Trees
 on:
   pull_request:
     paths:
-      - 'decision-tree/**'
+      - 'decision-trees/**'
     branches:
       - main
 
