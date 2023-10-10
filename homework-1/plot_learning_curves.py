@@ -2,11 +2,13 @@
 Plotting the learning curves for house data, candy data, and
 tennis data.
 """
+import argparse
 import math
 import random
 
-import ID3
 import matplotlib.pyplot as plt
+
+import ID3
 import parse
 
 
@@ -50,8 +52,8 @@ def plot_learning_curve(
     print(f"Saved image as images/learning_curve_{dataset_name}.png")
 
 
-def calculate_accuracy_for_plot(
-    dataset_filename, training_sizes, loop_size, dataset_name
+def calculate_accuracy_and_plot(
+    dataset_filename, training_sizes, loop_size, dataset_name, plot=True
 ):
     data = parse.parse(dataset_filename)
     avg_test_accuracy_with_pruning = []
@@ -86,34 +88,50 @@ def calculate_accuracy_for_plot(
         avg_test_accuracy_with_pruning.append(avg_accuracy_with_pruning)
         avg_test_accuracy_without_pruning.append(avg_accuracy_without_pruning)
 
-    plot_learning_curve(
-        training_sizes,
-        avg_test_accuracy_with_pruning,
-        avg_test_accuracy_without_pruning,
-        dataset_name,
+    if plot:
+        plot_learning_curve(
+            training_sizes,
+            avg_test_accuracy_with_pruning,
+            avg_test_accuracy_without_pruning,
+            dataset_name,
+        )
+
+
+def plot_learning_curve_house_data(dataset_filename, plot):
+    training_sizes = range(10, 305, 5)
+    print("Calculating ...")
+    calculate_accuracy_and_plot(
+        dataset_filename, training_sizes, 100, "House Votes", plot
     )
 
 
-def plot_learning_curve_house_data(dataset_filename):
-    training_sizes = range(10, 305, 5)
-    print("Calculating ...")
-    calculate_accuracy_for_plot(dataset_filename, training_sizes, 100, "House Votes")
-
-
-def plot_learning_curve_tennis_data(dataset_filename):
+def plot_learning_curve_tennis_data(dataset_filename, plot):
     training_sizes = range(1, 9, 1)
     print("Calculating ...")
-    calculate_accuracy_for_plot(dataset_filename, training_sizes, 10, "Tennis")
+    calculate_accuracy_and_plot(dataset_filename, training_sizes, 10, "Tennis", plot)
 
 
-def plot_learning_curve_candy_data(dataset_filename):
+def plot_learning_curve_candy_data(dataset_filename, plot):
     training_sizes = range(5, 64, 4)
     print("Calculating ...")
-    calculate_accuracy_for_plot(dataset_filename, training_sizes, 25, "Candy")
+    calculate_accuracy_and_plot(dataset_filename, training_sizes, 25, "Candy", plot)
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Plot learning curves.")
+    parser.add_argument(
+        "--no-plot",
+        dest="plot",
+        action="store_false",
+        help="Set to False to disable plotting",
+    )
+    args = parser.parse_args()
+    if not args.plot:
+        print("Plotting is disabled.")
+
     random.seed(101)
-    plot_learning_curve_house_data(dataset_filename="house_votes_84.data")
-    plot_learning_curve_tennis_data(dataset_filename="tennis.data")
-    plot_learning_curve_candy_data(dataset_filename="candy.data")
+    plot_learning_curve_house_data(
+        dataset_filename="house_votes_84.data", plot=args.plot
+    )
+    plot_learning_curve_tennis_data(dataset_filename="tennis.data", plot=args.plot)
+    plot_learning_curve_candy_data(dataset_filename="candy.data", plot=args.plot)

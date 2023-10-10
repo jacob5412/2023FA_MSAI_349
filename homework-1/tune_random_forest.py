@@ -1,11 +1,13 @@
 """
 Unit Tests
 """
+import argparse
 import math
 import random
 
-import ID3
 import matplotlib.pyplot as plt
+
+import ID3
 import parse
 from random_forest import RandomForest
 
@@ -96,7 +98,7 @@ def plot_num_trees_accuracies(accuracies_dict):
     plt.savefig("images/rf_num_trees_accuracies.png", bbox_inches="tight")
 
 
-def get_best_num_trees_for_random_forest(filename):
+def get_best_num_trees_for_random_forest(filename, plot=True):
     """
     Find the best number of trees for random forest.
     """
@@ -116,11 +118,12 @@ def get_best_num_trees_for_random_forest(filename):
             acc = random_forest.test(test)
             accuracies.append(acc)
         num_trees_accuracies[num_trees] = sum(accuracies) / len(accuracies)
-    plot_num_trees_accuracies(num_trees_accuracies)
+    if plot:
+        plot_num_trees_accuracies(num_trees_accuracies)
     return max(num_trees_accuracies, key=lambda key: num_trees_accuracies[key])
 
 
-def learning_curves_random_forest_id3(filename, training_sizes, num_trees):
+def learning_curves_random_forest_id3(filename, training_sizes, num_trees, plot=True):
     """
     Plot learning curves of RF and ID3 (with and without pruning)
     """
@@ -186,16 +189,17 @@ def learning_curves_random_forest_id3(filename, training_sizes, num_trees):
             sum(without_pruning_acc_train) / len(without_pruning_acc_train)
         )
         avg_train_accuracy_rf.append(sum(rf_acc_train) / len(rf_acc_train))
-    plot_random_forest_id3_accuracies(
-        training_sizes,
-        avg_test_accuracy_id3_pruning,
-        avg_test_accuracy_id3_not_pruning,
-        avg_test_accuracy_rf,
-        avg_train_accuracy_id3_pruning,
-        avg_train_accuracy_id3_not_pruning,
-        avg_train_accuracy_rf,
-        "Candy",
-    )
+    if plot:
+        plot_random_forest_id3_accuracies(
+            training_sizes,
+            avg_test_accuracy_id3_pruning,
+            avg_test_accuracy_id3_not_pruning,
+            avg_test_accuracy_rf,
+            avg_train_accuracy_id3_pruning,
+            avg_train_accuracy_id3_not_pruning,
+            avg_train_accuracy_rf,
+            "Candy",
+        )
 
 
 def compare_accuracies_id3_rf(filename, num_trees):
@@ -242,7 +246,20 @@ def compare_accuracies_id3_rf(filename, num_trees):
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Plot learning curves.")
+    parser.add_argument(
+        "--no-plot",
+        dest="plot",
+        action="store_false",
+        help="Set to False to disable plotting",
+    )
+    args = parser.parse_args()
+    if not args.plot:
+        print("Plotting is disabled.")
+
     random.seed(101)
-    best_num_trees = get_best_num_trees_for_random_forest("candy.data")
-    learning_curves_random_forest_id3("candy.data", range(5, 68, 4), best_num_trees)
+    best_num_trees = get_best_num_trees_for_random_forest("candy.data", args.plot)
+    learning_curves_random_forest_id3(
+        "candy.data", range(5, 68, 4), best_num_trees, args.plot
+    )
     compare_accuracies_id3_rf("candy.data", best_num_trees)
