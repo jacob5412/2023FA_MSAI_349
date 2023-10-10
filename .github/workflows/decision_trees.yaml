@@ -22,10 +22,9 @@ jobs:
           auto-activate-base: true
           activate-environment: ""
 
-      - name: Create and activate Conda environment
+      - name: Install Dependencies
         run: |
-          conda create --name myenv python=3.11 --file requirements.txt -y
-          conda activate myenv
+          pip install -r requirements.txt
         working-directory: ./
 
       - name: Run scripts
