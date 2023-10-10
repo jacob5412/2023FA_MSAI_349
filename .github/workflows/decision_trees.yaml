@@ -1,38 +1,29 @@
-name: Decision Trees
+name: Decision Trees Workflow
 
 on:
   pull_request:
     paths:
       - "decision-trees/**"
+      - "requirements.txt"
     branches:
       - main
 
 jobs:
-  run_auto_grader:
-    if: github.event_name == 'pull_request'
+  decision_trees:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Cache Conda environments
-        uses: actions/cache@v2
-        with:
-          path: ~/.conda/pkgs
-          key: ${{ runner.os }}-conda-${{ hashFiles('environment.yml') }} # Cache based on environment.yml file
-          restore-keys: |
-            ${{ runner.os }}-conda-
-
       - name: Set up Conda
         uses: conda-incubator/setup-miniconda
         with:
           python-version: anaconda3-2023.07-0
-          activate-environment: myenv
 
       - name: Create and activate Conda environment
         run: |
-          conda env create -f environment.yml  # Adjust the environment.yml file name
+          conda create --name myenv python=3.11 --file requirements.txt -y
           conda activate myenv
         working-directory: ./
 
@@ -40,6 +31,6 @@ jobs:
         run: |
           python /decision-trees/mini_auto_grader.py
           python /decision-trees/unit_tests.py
-          python /decision-trees/plot_learning_curves.py --no-plot
-          python /decision-trees/tune_random_forest.py --no-plot
+          python /decision-trees/plot_learning_curves.py
+          python /decision-trees/tune_random_forest.py
         working-directory: ./
