@@ -4,9 +4,8 @@ Unit Tests
 import math
 import random
 
-import matplotlib.pyplot as plt
-
 import ID3
+import matplotlib.pyplot as plt
 import parse
 from random_forest import RandomForest
 
@@ -30,18 +29,21 @@ def plot_random_forest_id3_accuracies(
         avg_test_accuracy_id3_pruning,
         label="[Test] ID3 (With Pruning)",
         color="orange",
+        marker="o",
     )
     plt.plot(
         training_sizes,
         avg_test_accuracy_id3_not_pruning,
         label="[Test] ID3 (Without Pruning)",
         color="blue",
+        marker="o",
     )
     plt.plot(
         training_sizes,
         avg_test_accuracy_rf,
         label="[Test] Random Forest",
         color="green",
+        marker="o",
     )
     plt.plot(
         training_sizes,
@@ -49,6 +51,7 @@ def plot_random_forest_id3_accuracies(
         label="[Train] ID3 (With Pruning)",
         color="orange",
         linestyle="--",
+        marker="o",
     )
     plt.plot(
         training_sizes,
@@ -56,6 +59,7 @@ def plot_random_forest_id3_accuracies(
         label="[Train] ID3 (Without Pruning)",
         color="blue",
         linestyle="--",
+        marker="o",
     )
     plt.plot(
         training_sizes,
@@ -63,6 +67,7 @@ def plot_random_forest_id3_accuracies(
         label="[Train] Random Forest",
         color="green",
         linestyle="--",
+        marker="o",
     )
     plt.xlabel("Number of Training Examples")
     plt.ylabel("Average Accuracy")

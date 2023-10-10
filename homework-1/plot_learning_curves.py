@@ -5,9 +5,8 @@ tennis data.
 import math
 import random
 
-import matplotlib.pyplot as plt
-
 import ID3
+import matplotlib.pyplot as plt
 import parse
 
 
@@ -33,12 +32,14 @@ def plot_learning_curve(
         avg_accuracies_with_pruning,
         label="With Pruning",
         color="orange",
+        marker="o",
     )
     plt.plot(
         training_sizes,
         avg_accuracies_without_pruning,
         label="Without Pruning",
         color="blue",
+        marker="o",
     )
     plt.xlabel("Number of Training Examples")
     plt.ylabel("Average Accuracy on Test Data")
