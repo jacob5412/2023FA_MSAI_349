@@ -24,7 +24,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          pip install -r requirements.txt
+          pip3 install -r requirements.txt
         working-directory: ./
 
       - name: Run scripts
