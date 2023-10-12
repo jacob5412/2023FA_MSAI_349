@@ -11,6 +11,9 @@ on:
 jobs:
   decision_trees:
     runs-on: macos-latest
+    defaults:
+      run:
+        shell: bash -l {0}
 
     steps:
       - name: Checkout code
@@ -20,10 +23,11 @@ jobs:
         uses: conda-incubator/setup-miniconda@v2
         with:
           auto-activate-base: true
-          activate-environment: ""
+          activate-environment: "env"
 
       - name: Install Dependencies
         run: |
+          conda activate env
           pip3 install -r requirements.txt
         working-directory: ./
 
