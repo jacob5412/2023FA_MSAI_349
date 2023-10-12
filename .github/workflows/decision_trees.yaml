@@ -11,6 +11,9 @@ on:
 jobs:
   decision_trees:
     runs-on: macos-latest
+    defaults:
+      run:
+        shell: bash -l {0}
 
     steps:
       - name: Checkout code
@@ -24,7 +27,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          source ~/anaconda3/bin/activate
+          conda activate env
           pip3 install -r requirements.txt
         working-directory: ./
 
