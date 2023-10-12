@@ -24,7 +24,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          conda activate env
+          source ~/anaconda3/bin/activate
           pip3 install -r requirements.txt
         working-directory: ./
 
