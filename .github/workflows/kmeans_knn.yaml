@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  decision_trees:
+  kmeans_knn:
     runs-on: macos-latest
     defaults:
       run:
