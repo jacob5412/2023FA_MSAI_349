@@ -1,0 +1,37 @@
+name: Kmeans & KNN Workflow
+
+on:
+  pull_request:
+    paths:
+      - "kmeans-knn/**"
+      - "requirements.txt"
+    branches:
+      - main
+
+jobs:
+  decision_trees:
+    runs-on: macos-latest
+    defaults:
+      run:
+        shell: bash -l {0}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Conda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-activate-base: true
+          activate-environment: "env"
+
+      - name: Install Dependencies
+        run: |
+          conda activate env
+          pip3 install -r requirements.txt
+        working-directory: ./
+
+      - name: Run scripts
+        run: |
+          python3 starter.py
+        working-directory: ./kmeans-knn
