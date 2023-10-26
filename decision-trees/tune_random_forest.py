@@ -5,9 +5,8 @@ import argparse
 import math
 import random
 
-import matplotlib.pyplot as plt
-
 import ID3
+import matplotlib.pyplot as plt
 import parse
 from random_forest import RandomForest
 
