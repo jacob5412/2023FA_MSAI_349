@@ -7,7 +7,10 @@ import numpy as np
 def euclidean_distance(mat_a, mat_b):
     """
     Calculate the pairwise Euclidean distances between row vectors
-    of two matrices.
+    of two matrices. Uses efficient euclidean distance, similar to
+    sklearn's approach.
+
+    https://scikit-learn.org/stable/modules/generated/sklearn.metrics.pairwise.euclidean_distances.html
 
     Parameters:
         mat_a (numpy.ndarray): The first matrix.
@@ -28,8 +31,6 @@ def euclidean_distance(mat_a, mat_b):
 
     l1_norm_a = np.sum(mat_a**2, axis=1, keepdims=True)
     l1_norm_b = np.sum(mat_b**2, axis=1, keepdims=True)
-    # Efficient euclidean distance
-    # Source: https://scikit-learn.org/stable/modules/generated/sklearn.metrics.pairwise.euclidean_distances.html
     dist = np.sqrt(l1_norm_a - 2 * np.dot(mat_a, mat_b.T) + l1_norm_b.T)
     return dist
 
