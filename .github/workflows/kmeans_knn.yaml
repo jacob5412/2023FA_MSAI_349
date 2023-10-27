@@ -33,5 +33,5 @@ jobs:
 
       - name: Run scripts
         run: |
-          python3 starter.py
+          python3 unit_tests.py
         working-directory: ./kmeans-knn
