@@ -21,14 +21,7 @@ def euclidean_distance(mat_a, mat_b):
         of rows in mat_a and mat_b, where each element (i, j) in the
         matrix represents the Euclidean distance between the i-th row of
         mat_a and the j-th row of mat_b.
-
-    Raises:
-        ValueError: If the input matrices mat_a and mat_b do not have the
-                    same shape.
     """
-    if mat_a.shape != mat_b.shape:
-        raise ValueError("Input matrices mat_a and mat_b must have the same shape")
-
     l1_norm_a = np.sum(mat_a**2, axis=1, keepdims=True)
     l1_norm_b = np.sum(mat_b**2, axis=1, keepdims=True)
     dist = np.sqrt(l1_norm_a - 2 * np.dot(mat_a, mat_b.T) + l1_norm_b.T)
@@ -45,17 +38,11 @@ def cosine_distance(mat_a, mat_b):
         mat_b (numpy.ndarray): The second matrix.
 
     Returns:
-        numpy.ndarray: A matrix of pairwise Cosine distances.
-
-    Raises:
         Resulting matrix will have dimensions corresponding to the number
         of rows in mat_a and mat_b, where each element (i, j) in the
         matrix represents the Cosine distance between the i-th row of
         mat_a and the j-th row of mat_b.
     """
-    if mat_a.shape != mat_b.shape:
-        raise ValueError("Input matrices mat_a and mat_b must have the same shape")
-
     l2_norm_a = np.sqrt(np.sum(mat_a**2, axis=1, keepdims=True))
     l2_norm_b = np.sqrt(np.sum(mat_b**2, axis=1, keepdims=True))
     cosine_sim = np.dot(mat_a, mat_b.T) / (l2_norm_a * l2_norm_b.T)
