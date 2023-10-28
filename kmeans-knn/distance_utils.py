@@ -26,7 +26,7 @@ def euclidean_distance(mat_a, mat_b):
         ValueError: If the input matrices mat_a and mat_b do not have the
                     compatible shapes for dot products.
     """
-    if mat_a.shape[1] != mat_b.T.shape[0]:
+    if mat_a.shape[1] != mat_b.shape[1]:
         raise ValueError("Input matrices must have compatible shapes for dot products")
 
     l1_norm_a = np.sum(mat_a**2, axis=1, keepdims=True)
@@ -54,7 +54,7 @@ def cosine_distance(mat_a, mat_b):
         ValueError: If the input matrices mat_a and mat_b do not have the
                     compatible shapes for dot products.
     """
-    if mat_a.shape[1] != mat_b.T.shape[0]:
+    if mat_a.shape[1] != mat_b.shape[1]:
         raise ValueError("Input matrices must have compatible shapes for dot products")
 
     l2_norm_a = np.sqrt(np.sum(mat_a**2, axis=1, keepdims=True))
