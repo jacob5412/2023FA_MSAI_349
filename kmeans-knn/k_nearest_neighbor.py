@@ -1,5 +1,5 @@
 import numpy as np
-import distance_utils as du
+import distance_utils
 from distances import euclidean_distances, manhattan_distances
 
 
@@ -42,13 +42,19 @@ class KNearestNeighbor:
             aggregator {str} -- How to aggregate a label across the `n_neighbors` nearest
                 neighbors. Can be one of 'mode', 'mean', or 'median'.
         """
-        self.targets = None
-        self.features = None
-        self.k = 5  # TODO: adjust
+        self.k = None
         self.n_neighbors = n_neighbors
         self.distance_measure = distance_measure
         self.aggregator = aggregator
 
+    def _get_distances(self, train_feature, test_feature, metric="euclidean"):
+        distance_metric = getattr(distance_utils, metric + "_distance")
+        distances = distance_metric(train_feature, test_feature)
+        return distances
+    
+    def _most_common(self, lst):
+        return max(set(lst), key=lst.count)
+        
     def fit(self, features, targets):
         """Fit features, a numpy array of size (n_samples, n_features). For a KNN, this
         function should store the features and corresponding targets in class
@@ -61,12 +67,9 @@ class KNearestNeighbor:
             targets {[type]} -- Target labels for each data point, shape of (n_samples,
                 n_dimensions).
         """
-        self.features = features
-        self.targets = targets
-
-    def most_common(self, lst):
-        return max(set(lst), key=lst.count)
-
+        self.X_train = features
+        self.Y_train = targets
+        
     def predict(self, features, ignore_first=False):
         """Predict from features, a numpy array of size (n_samples, n_features) Use the
         training data to predict labels on the test features. For each testing sample, compare it
@@ -89,21 +92,17 @@ class KNearestNeighbor:
             labels {np.ndarray} -- Labels for each data point, of shape (n_samples,
                 n_dimensions). This n_dimensions should be the same as n_dimensions of targets in fit function.
         """
+        self.X_test = features
+
         neighbors = []
-        for x in features:
-            distances = self.get_distances(x)
-            y_sorted = [y for _, y in sorted(zip(distances, self.targets))]
+        for x_test_feature in self.X_test:
+            dists = []
+            for x_train_feature in self.X_train: 
+                distance = self.get_distances(x_train_feature, x_test_feature)
+                dists.append(distance)
+            y_sorted = [y for _, y in sorted(zip(dists, self.Y_train))]
             neighbors.append(y_sorted[: self.k])
+            
         return list(
             map(self.most_common, neighbors if not ignore_first else neighbors[1:])
         )
-
-    def get_distances(self, feature):
-        if self.distance_measure == "euclidean":
-            return du.euclidean_distance(feature, self.features)
-        elif self.distance_measure == "manhattan":
-            return manhattan_distances  # TODO:
-        elif self.distance_measure == "cosim":
-            return du.cosine_distance(feature, self.features)
-        else:
-            raise NotImplementedError()
