@@ -1,12 +1,16 @@
-import distance_utils
-
+"""
+K-means
+"""
 import numpy as np
+
+import distance_utils
 
 
 class KMeans:
     def __init__(self, n_clusters):
         """
-        This class implements the traditional KMeans algorithm with hard assignments:
+        This class implements the traditional KMeans algorithm with hard
+        assignments:
 
         https://en.wikipedia.org/wiki/K-means_clustering
 
@@ -15,14 +19,15 @@ class KMeans:
         1. Update assignments
         2. Update the means
 
-        While you only have to implement the fit and predict functions to pass the
-        test cases, we recommend that you use an update_assignments function and an
-        update_means function internally for the class.
+        While you only have to implement the fit and predict functions to pass
+        the test cases, we recommend that you use an update_assignments
+        function and an update_means function internally for the class.
 
         Use only numpy to implement this algorithm.
 
         Args:
-            n_clusters (int): Number of clusters to cluster the given data into.
+            n_clusters (int): Number of clusters to cluster the given data
+                              into.
 
         """
         self.n_clusters = n_clusters
@@ -37,12 +42,12 @@ class KMeans:
         n_iterations=1000,
     ):
         """
-        Fit KMeans to the given data using `self.n_clusters` number of clusters.
-        Features can have greater than 2 dimensions.
+        Fit KMeans to the given data using `self.n_clusters` number of
+        clusters. Features can have greater than 2 dimensions.
 
         Args:
             features (np.ndarray): array containing inputs of size
-                (n_samples, n_features).
+            (n_samples, n_features).
         Returns:
             None (saves model - means - internally)
         """
@@ -60,16 +65,16 @@ class KMeans:
 
     def predict(self, features, metric="euclidean"):
         """
-        Given features, an np.ndarray of size (n_samples, n_features), predict cluster
-        membership labels.
+        Given features, an np.ndarray of size (n_samples, n_features), predict
+        cluster membership labels.
 
         Args:
             features (np.ndarray): array containing inputs of size
-                (n_samples, n_features).
+            (n_samples, n_features).
         Returns:
-            predictions (np.ndarray): predicted cluster membership for each features,
-                of size (n_samples,). Each element of the array is the index of the
-                cluster the sample belongs to.
+            predictions (np.ndarray): predicted cluster membership for each
+            features, of size (n_samples,). Each element of the array is the
+            index of the cluster the sample belongs to.
         """
         raise NotImplementedError()
 
@@ -96,12 +101,18 @@ class KMeans:
         return no_centroids_change or max_iterations
 
     def _update_cluster_assignments(self, features, metric):
+        """
+        Update cluster assignments based on a distance metric.
+        """
         distance_metric = getattr(distance_utils, metric + "_distance")
         distances = distance_metric(features, self.centroids)
         cluster_assignments = np.argmin(distances, axis=1)
         return cluster_assignments
 
     def _update_centroids(self, features, cluster_assignments):
+        """
+        Update centroids based on the new cluster assignments.
+        """
         self.centroids = np.array(
             [
                 np.mean(features[cluster_assignments == i], axis=0)
