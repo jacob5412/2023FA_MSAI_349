@@ -5,9 +5,8 @@ import unittest
 from random import randint
 
 import numpy as np
-from sklearn.metrics import pairwise
-
 from distance_utils import cosine_distance, euclidean_distance
+from sklearn.metrics import pairwise
 
 
 class TestDistanceMetrics(unittest.TestCase):

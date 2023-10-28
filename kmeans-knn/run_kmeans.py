@@ -2,12 +2,11 @@
 Run K-means algorithm
 """
 import numpy as np
-
 from evaluation_utils import (
     create_confusion_matrix,
     display_confusion_matrix,
+    display_eval_metrics,
     eval_metrics_from_confusion_matrix,
-    display_eval_metrics
 )
 from kmeans import KMeans
 

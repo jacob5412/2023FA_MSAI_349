@@ -1,9 +1,8 @@
 """
 K-means
 """
-import numpy as np
-
 import distance_utils
+import numpy as np
 
 
 class KMeans:
