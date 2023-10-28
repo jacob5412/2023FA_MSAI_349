@@ -24,10 +24,10 @@ def euclidean_distance(mat_a, mat_b):
 
     Raises:
         ValueError: If the input matrices mat_a and mat_b do not have the
-                    same shape.
+                    compatible shapes for dot products.
     """
-    if mat_a.shape != mat_b.shape:
-        raise ValueError("Input matrices mat_a and mat_b must have the same shape")
+    if mat_a.shape[1] != mat_b.T.shape[0]:
+        raise ValueError("Input matrices must have compatible shapes for dot products")
 
     l1_norm_a = np.sum(mat_a**2, axis=1, keepdims=True)
     l1_norm_b = np.sum(mat_b**2, axis=1, keepdims=True)
@@ -45,16 +45,17 @@ def cosine_distance(mat_a, mat_b):
         mat_b (numpy.ndarray): The second matrix.
 
     Returns:
-        numpy.ndarray: A matrix of pairwise Cosine distances.
-
-    Raises:
         Resulting matrix will have dimensions corresponding to the number
         of rows in mat_a and mat_b, where each element (i, j) in the
         matrix represents the Cosine distance between the i-th row of
         mat_a and the j-th row of mat_b.
+
+    Raises:
+        ValueError: If the input matrices mat_a and mat_b do not have the
+                    compatible shapes for dot products.
     """
-    if mat_a.shape != mat_b.shape:
-        raise ValueError("Input matrices mat_a and mat_b must have the same shape")
+    if mat_a.shape[1] != mat_b.T.shape[0]:
+        raise ValueError("Input matrices must have compatible shapes for dot products")
 
     l2_norm_a = np.sqrt(np.sum(mat_a**2, axis=1, keepdims=True))
     l2_norm_b = np.sqrt(np.sum(mat_b**2, axis=1, keepdims=True))

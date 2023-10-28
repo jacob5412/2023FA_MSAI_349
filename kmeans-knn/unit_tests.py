@@ -25,8 +25,9 @@ class TestDistanceMetrics(unittest.TestCase):
         self.mat4 = np.random.rand(random_mat_nrows, random_mat_ncols)
         self.mat5 = np.random.rand(random_mat_nrows, random_mat_ncols)
         self.mat6 = np.array([[-1.0, 2.4, 4.0, 514.31]])
+        self.mat7 = np.array([[7, 8, 10]])
 
-    def test_euclidean_1(self):
+    def test_euclidean_distance_1(self):
         """
         Test Euclidean distance between mat1 and mat2.
         """
@@ -34,7 +35,7 @@ class TestDistanceMetrics(unittest.TestCase):
         sklearn_result = pairwise.euclidean_distances(self.mat1, self.mat2)
         self.assertTrue(np.allclose(custom_result, sklearn_result))
 
-    def test_euclidean_2(self):
+    def test_euclidean_distance_2(self):
         """
         Test Euclidean distance between mat2 and mat3.
         """
@@ -42,19 +43,27 @@ class TestDistanceMetrics(unittest.TestCase):
         sklearn_result = pairwise.euclidean_distances(self.mat2, self.mat3)
         self.assertTrue(np.allclose(custom_result, sklearn_result))
 
-    def test_euclidean_3(self):
+    def test_euclidean_distance_3(self):
         """
         Test Euclidean distance with matrices of different length.
         """
         with self.assertRaises(ValueError):
             euclidean_distance(self.mat3, self.mat6)
 
-    def test_euclidean_4(self):
+    def test_euclidean_distance_4(self):
         """
         Test Euclidean distance with random length matrices.
         """
         custom_result = euclidean_distance(self.mat4, self.mat5)
         sklearn_result = pairwise.euclidean_distances(self.mat4, self.mat5)
+        self.assertTrue(np.allclose(custom_result, sklearn_result))
+
+    def test_euclidean_distance_5(self):
+        """
+        Test Euclidean distance with different length matrices.
+        """
+        custom_result = euclidean_distance(self.mat3, self.mat7)
+        sklearn_result = pairwise.euclidean_distances(self.mat3, self.mat7)
         self.assertTrue(np.allclose(custom_result, sklearn_result))
 
     def test_cosine_distance_1(self):
@@ -86,6 +95,14 @@ class TestDistanceMetrics(unittest.TestCase):
         """
         custom_result = cosine_distance(self.mat4, self.mat5)
         sklearn_result = pairwise.cosine_distances(self.mat4, self.mat5)
+        self.assertTrue(np.allclose(custom_result, sklearn_result))
+
+    def test_cosine_distance_5(self):
+        """
+        Test Cosine distance with different length matrices.
+        """
+        custom_result = cosine_distance(self.mat3, self.mat7)
+        sklearn_result = pairwise.cosine_distances(self.mat3, self.mat7)
         self.assertTrue(np.allclose(custom_result, sklearn_result))
 
 
