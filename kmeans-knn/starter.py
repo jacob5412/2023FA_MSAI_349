@@ -1,18 +1,40 @@
+import pandas as pd
+
+import distance_utils as du
+import k_nearest_neighbor as k_n_n
+import principal_component_analysis as pca
+import numpy as np
+
+
 # returns Euclidean distance between vectors a dn b
 def euclidean(a, b):
-    return dist
+    return du.euclidean_distance(a, b)
 
 
 # returns Cosine Similarity between vectors a dn b
 def cosim(a, b):
-    return dist
+    return du.cosine_distance(a, b)
 
 
 # returns a list of labels for the query dataset based upon labeled observations in the train dataset.
 # metric is a string specifying either "euclidean" or "cosim".
 # All hyper-parameters should be hard-coded in the algorithm.
 def knn(train, query, metric):
-    return labels
+    # hyper-parameters
+    num_neighbors = len(train) // 2
+    num_components = len(train) // 4
+
+    neighbors = get_neighbors(train, query, num_neighbors)
+    k_nearest_neighbor = k_n_n.KNearestNeighbor(
+        neighbors, distance_measure=metric, aggregator="mean"
+    )
+    df = pd.DataFrame()
+    for train_row in train:
+        pd.concat([df, pd.DataFrame(eval(i) for i in train_row[1])])
+    features = pca.PCA(df.to_numpy(), num_components).transform()
+    k_nearest_neighbor.fit(features, query)
+
+    return k_nearest_neighbor.predict(features, ignore_first=True)
 
 
 # returns a list of labels for the query dataset based upon observations in the train dataset.
@@ -21,6 +43,21 @@ def knn(train, query, metric):
 # All hyper-parameters should be hard-coded in the algorithm.
 def kmeans(train, query, metric):
     return labels
+
+
+# Locate the most similar neighbors
+def get_neighbors(train, test_row, num_neighbors):
+    distances = list()
+    for train_row in train:
+        train_row_res = np.array([[eval(i) for i in train_row[1]]])
+        test_row_res = np.array([[eval(i) for i in test_row[1]]])
+        dist = du.euclidean_distance(train_row_res, test_row_res)
+        distances.append((train_row, dist))
+    distances.sort(key=lambda tup: tup[1])
+    neighbors = list()
+    for i in range(num_neighbors):
+        neighbors.append(distances[i][0])
+    return neighbors
 
 
 def read_data(file_name):

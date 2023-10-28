@@ -1,6 +1,6 @@
 import numpy as np
-
-from .distances import euclidean_distances, manhattan_distances
+import distance_utils as du
+from distances import euclidean_distances, manhattan_distances
 
 
 class KNearestNeighbor:
@@ -42,9 +42,12 @@ class KNearestNeighbor:
             aggregator {str} -- How to aggregate a label across the `n_neighbors` nearest
                 neighbors. Can be one of 'mode', 'mean', or 'median'.
         """
+        self.targets = None
+        self.features = None
+        self.k = 5  # TODO: adjust
         self.n_neighbors = n_neighbors
-
-        raise NotImplementedError()
+        self.distance_measure = distance_measure
+        self.aggregator = aggregator
 
     def fit(self, features, targets):
         """Fit features, a numpy array of size (n_samples, n_features). For a KNN, this
@@ -58,8 +61,11 @@ class KNearestNeighbor:
             targets {[type]} -- Target labels for each data point, shape of (n_samples,
                 n_dimensions).
         """
+        self.features = features
+        self.targets = targets
 
-        raise NotImplementedError()
+    def most_common(self, lst):
+        return max(set(lst), key=lst.count)
 
     def predict(self, features, ignore_first=False):
         """Predict from features, a numpy array of size (n_samples, n_features) Use the
@@ -83,4 +89,21 @@ class KNearestNeighbor:
             labels {np.ndarray} -- Labels for each data point, of shape (n_samples,
                 n_dimensions). This n_dimensions should be the same as n_dimensions of targets in fit function.
         """
-        raise NotImplementedError()
+        neighbors = []
+        for x in features:
+            distances = self.get_distances(x)
+            y_sorted = [y for _, y in sorted(zip(distances, self.targets))]
+            neighbors.append(y_sorted[: self.k])
+        return list(
+            map(self.most_common, neighbors if not ignore_first else neighbors[1:])
+        )
+
+    def get_distances(self, feature):
+        if self.distance_measure == "euclidean":
+            return du.euclidean_distance(feature, self.features)
+        elif self.distance_measure == "manhattan":
+            return manhattan_distances  # TODO:
+        elif self.distance_measure == "cosim":
+            return du.cosine_distance(feature, self.features)
+        else:
+            raise NotImplementedError()

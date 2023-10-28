@@ -9,6 +9,8 @@ from sklearn.metrics import pairwise
 
 from distance_utils import cosine_distance, euclidean_distance
 
+import starter
+
 
 class TestDistanceMetrics(unittest.TestCase):
     """
@@ -104,6 +106,16 @@ class TestDistanceMetrics(unittest.TestCase):
         custom_result = cosine_distance(self.mat3, self.mat7)
         sklearn_result = pairwise.cosine_distances(self.mat3, self.mat7)
         self.assertTrue(np.allclose(custom_result, sklearn_result))
+
+    def test_k_nearest_neighbor(self):
+        """
+        Test K Nearest Neighbor with training and test datasets
+        """
+        train_dataset = starter.read_data("train.csv")
+        test_dataset = starter.read_data("test.csv")
+        for query in test_dataset:
+            labels = starter.knn(train_dataset, query, metric="euclidean")
+            print(labels)
 
 
 if __name__ == "__main__":
