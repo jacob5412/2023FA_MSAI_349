@@ -26,6 +26,8 @@ class TestDistanceMetrics(unittest.TestCase):
         self.mat5 = np.random.rand(random_mat_nrows, random_mat_ncols)
         self.mat6 = np.array([[-1.0, 2.4, 4.0, 514.31]])
         self.mat7 = np.array([[7, 8, 10]])
+        self.vec1 = np.array([431, 2, 3])
+        self.vec2 = np.array([3, 431, -1])
 
     def test_euclidean_distance_1(self):
         """
@@ -66,6 +68,16 @@ class TestDistanceMetrics(unittest.TestCase):
         sklearn_result = pairwise.euclidean_distances(self.mat3, self.mat7)
         self.assertTrue(np.allclose(custom_result, sklearn_result))
 
+    def test_euclidean_distance_6(self):
+        """
+        Test Euclidean distance with vectors.
+        """
+        custom_result = euclidean_distance(self.vec1, self.vec2)
+        sklearn_result = pairwise.euclidean_distances(
+            self.vec1.reshape(1, -1), self.vec2.reshape(1, -1)
+        )
+        self.assertTrue(np.allclose(custom_result, sklearn_result))
+
     def test_cosine_distance_1(self):
         """
         Test Cosine distance between mat1 and mat2.
@@ -103,6 +115,16 @@ class TestDistanceMetrics(unittest.TestCase):
         """
         custom_result = cosine_distance(self.mat3, self.mat7)
         sklearn_result = pairwise.cosine_distances(self.mat3, self.mat7)
+        self.assertTrue(np.allclose(custom_result, sklearn_result))
+
+    def test_cosine_distance_6(self):
+        """
+        Test Cosine distance with vectors.
+        """
+        custom_result = cosine_distance(self.vec1, self.vec2)
+        sklearn_result = pairwise.cosine_distances(
+            self.vec1.reshape(1, -1), self.vec2.reshape(1, -1)
+        )
         self.assertTrue(np.allclose(custom_result, sklearn_result))
 
 

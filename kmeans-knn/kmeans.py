@@ -76,7 +76,7 @@ class KMeans:
             features, of size (n_samples,). Each element of the array is the
             index of the cluster the sample belongs to.
         """
-        raise NotImplementedError()
+        return self._update_cluster_assignments(features, metric)
 
     def _initialize_centroids(self, features):
         """

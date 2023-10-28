@@ -5,14 +5,6 @@ def knn(train, query, metric):
     return labels
 
 
-# returns a list of labels for the query dataset based upon observations in the train dataset.
-# labels should be ignored in the training set
-# metric is a string specifying either "euclidean" or "cosim".
-# All hyper-parameters should be hard-coded in the algorithm.
-def kmeans(train, query, metric):
-    return labels
-
-
 def show(file_name, mode):
     data_set = read_data(file_name)
     for obs in range(len(data_set)):
