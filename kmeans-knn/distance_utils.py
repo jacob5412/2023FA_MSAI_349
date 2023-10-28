@@ -26,7 +26,11 @@ def euclidean_distance(mat_a, mat_b):
         ValueError: If the input matrices mat_a and mat_b do not have the
                     compatible shapes for dot products.
     """
-    if mat_a.shape[1] != mat_b.shape[1]:
+    if len(mat_a.shape) == 1:
+        mat_a = mat_a.reshape(1, -1)
+    if len(mat_b.shape) == 1:
+        mat_b = mat_b.reshape(1, -1)
+    if mat_a.shape[-1] != mat_b.shape[-1]:
         raise ValueError("Input matrices must have compatible shapes for dot products")
 
     l1_norm_a = np.sum(mat_a**2, axis=1, keepdims=True)
@@ -35,9 +39,9 @@ def euclidean_distance(mat_a, mat_b):
     return dist
 
 
-def cosine_distance(mat_a, mat_b):
+def cosine_similarity(mat_a, mat_b):
     """
-    Calculate the pairwise Cosine distances between row vectors
+    Calculate the pairwise Cosine similarity between row vectors
     of two matrices.
 
     Parameters:
@@ -54,10 +58,14 @@ def cosine_distance(mat_a, mat_b):
         ValueError: If the input matrices mat_a and mat_b do not have the
                     compatible shapes for dot products.
     """
-    if mat_a.shape[1] != mat_b.shape[1]:
+    if len(mat_a.shape) == 1:
+        mat_a = mat_a.reshape(1, -1)
+    if len(mat_b.shape) == 1:
+        mat_b = mat_b.reshape(1, -1)
+    if mat_a.shape[-1] != mat_b.shape[-1]:
         raise ValueError("Input matrices must have compatible shapes for dot products")
 
     l2_norm_a = np.sqrt(np.sum(mat_a**2, axis=1, keepdims=True))
     l2_norm_b = np.sqrt(np.sum(mat_b**2, axis=1, keepdims=True))
     cosine_sim = np.dot(mat_a, mat_b.T) / (l2_norm_a * l2_norm_b.T)
-    return 1 - cosine_sim
+    return cosine_sim
