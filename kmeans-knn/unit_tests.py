@@ -5,7 +5,7 @@ import unittest
 from random import randint
 
 import numpy as np
-from distance_utils import cosine_distance, euclidean_distance
+from distance_utils import cosine_similarity, euclidean_distance
 from sklearn.metrics import pairwise
 
 
@@ -77,51 +77,51 @@ class TestDistanceMetrics(unittest.TestCase):
         )
         self.assertTrue(np.allclose(custom_result, sklearn_result))
 
-    def test_cosine_distance_1(self):
+    def test_cosine_similarity_1(self):
         """
         Test Cosine distance between mat1 and mat2.
         """
-        custom_result = cosine_distance(self.mat1, self.mat2)
-        sklearn_result = pairwise.cosine_distances(self.mat1, self.mat2)
+        custom_result = cosine_similarity(self.mat1, self.mat2)
+        sklearn_result = pairwise.cosine_similarity(self.mat1, self.mat2)
         self.assertTrue(np.allclose(custom_result, sklearn_result))
 
-    def test_cosine_distance_2(self):
+    def test_cosine_similarity_2(self):
         """
         Test Cosine distance between mat2 and mat3.
         """
-        custom_result = cosine_distance(self.mat2, self.mat3)
-        sklearn_result = pairwise.cosine_distances(self.mat2, self.mat3)
+        custom_result = cosine_similarity(self.mat2, self.mat3)
+        sklearn_result = pairwise.cosine_similarity(self.mat2, self.mat3)
         self.assertTrue(np.allclose(custom_result, sklearn_result))
 
-    def test_cosine_distance_3(self):
+    def test_cosine_similarity_3(self):
         """
         Test Cosine distance with matrices of different length.
         """
         with self.assertRaises(ValueError):
-            cosine_distance(self.mat3, self.mat6)
+            cosine_similarity(self.mat3, self.mat6)
 
-    def test_cosine_distance_4(self):
+    def test_cosine_similarity_4(self):
         """
         Test Cosine distance with random length matrices.
         """
-        custom_result = cosine_distance(self.mat4, self.mat5)
-        sklearn_result = pairwise.cosine_distances(self.mat4, self.mat5)
+        custom_result = cosine_similarity(self.mat4, self.mat5)
+        sklearn_result = pairwise.cosine_similarity(self.mat4, self.mat5)
         self.assertTrue(np.allclose(custom_result, sklearn_result))
 
-    def test_cosine_distance_5(self):
+    def test_cosine_similarity_5(self):
         """
         Test Cosine distance with different length matrices.
         """
-        custom_result = cosine_distance(self.mat3, self.mat7)
-        sklearn_result = pairwise.cosine_distances(self.mat3, self.mat7)
+        custom_result = cosine_similarity(self.mat3, self.mat7)
+        sklearn_result = pairwise.cosine_similarity(self.mat3, self.mat7)
         self.assertTrue(np.allclose(custom_result, sklearn_result))
 
-    def test_cosine_distance_6(self):
+    def test_cosine_similarity_6(self):
         """
         Test Cosine distance with vectors.
         """
-        custom_result = cosine_distance(self.vec1, self.vec2)
-        sklearn_result = pairwise.cosine_distances(
+        custom_result = cosine_similarity(self.vec1, self.vec2)
+        sklearn_result = pairwise.cosine_similarity(
             self.vec1.reshape(1, -1), self.vec2.reshape(1, -1)
         )
         self.assertTrue(np.allclose(custom_result, sklearn_result))

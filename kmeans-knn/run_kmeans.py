@@ -70,7 +70,9 @@ if __name__ == "__main__":
     n_clusters = 10
     kmeans = KMeans(n_clusters)
     kmeans.fit(validation_set_features, metric="euclidean")
-    predicted_labels = kmeans.predict(validation_set_features, metric="euclidean")
+    predicted_labels = kmeans.predict(
+        validation_set_features, validation_set_labels, metric="euclidean"
+    )
 
     confusion_mat = create_confusion_matrix(
         n_clusters, validation_set_labels, predicted_labels

@@ -39,9 +39,9 @@ def euclidean_distance(mat_a, mat_b):
     return dist
 
 
-def cosine_distance(mat_a, mat_b):
+def cosine_similarity(mat_a, mat_b):
     """
-    Calculate the pairwise Cosine distances between row vectors
+    Calculate the pairwise Cosine similarity between row vectors
     of two matrices.
 
     Parameters:
@@ -68,4 +68,4 @@ def cosine_distance(mat_a, mat_b):
     l2_norm_a = np.sqrt(np.sum(mat_a**2, axis=1, keepdims=True))
     l2_norm_b = np.sqrt(np.sum(mat_b**2, axis=1, keepdims=True))
     cosine_sim = np.dot(mat_a, mat_b.T) / (l2_norm_a * l2_norm_b.T)
-    return 1 - cosine_sim
+    return cosine_sim

@@ -36,9 +36,9 @@ class KMeans:
         self,
         features,
         metric="euclidean",
-        rtol_threshold=1e-3,
-        atol_threshold=1e-4,
-        n_iterations=1000,
+        rtol_threshold=1e-6,
+        atol_threshold=1e-7,
+        n_iterations=10000,
     ):
         """
         Fit KMeans to the given data using `self.n_clusters` number of
@@ -62,7 +62,7 @@ class KMeans:
             cluster_assignments = self._update_cluster_assignments(features, metric)
             self._update_centroids(features, cluster_assignments)
 
-    def predict(self, features, metric="euclidean"):
+    def predict(self, features, labels, metric="euclidean"):
         """
         Given features, an np.ndarray of size (n_samples, n_features), predict
         cluster membership labels.
@@ -70,12 +70,23 @@ class KMeans:
         Args:
             features (np.ndarray): array containing inputs of size
             (n_samples, n_features).
+            labels (np.ndarray): array containing input labels.
         Returns:
             predictions (np.ndarray): predicted cluster membership for each
             features, of size (n_samples,). Each element of the array is the
             index of the cluster the sample belongs to.
         """
-        return self._update_cluster_assignments(features, metric)
+        cluster_assignments = self._update_cluster_assignments(features, metric)
+        predicted_labels = np.zeros_like(cluster_assignments)
+        cluster_labels = np.unique(cluster_assignments)
+
+        for cluster_id in cluster_labels:
+            cluster_mask = cluster_assignments == cluster_id
+            if np.sum(cluster_mask) > 0:
+                true_labels = labels[cluster_mask]
+                majority_label = np.argmax(np.bincount(true_labels))
+                predicted_labels[cluster_mask] = majority_label
+        return predicted_labels
 
     def _initialize_centroids(self, features):
         """
