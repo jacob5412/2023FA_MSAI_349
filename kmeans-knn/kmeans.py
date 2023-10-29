@@ -4,7 +4,6 @@ K-means
 import logging
 
 import numpy as np
-
 from utilities import distance_utils
 
 logging.basicConfig(level=logging.INFO)

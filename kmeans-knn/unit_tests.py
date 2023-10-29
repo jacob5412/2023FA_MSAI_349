@@ -5,9 +5,8 @@ import unittest
 from random import randint
 
 import numpy as np
-from sklearn.metrics import pairwise
 from sklearn.decomposition import PCA as sklearn_PCA
-
+from sklearn.metrics import pairwise
 from utilities.distance_utils import cosine_similarity, euclidean_distance
 from utilities.pca_utils import PCA
 
