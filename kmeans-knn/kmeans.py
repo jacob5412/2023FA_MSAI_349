@@ -1,28 +1,23 @@
 """
 K-means
 """
-import distance_utils
 import numpy as np
+
+from utilities import distance_utils
 
 
 class KMeans:
+    """
+    This class implements the traditional KMeans algorithm with hard
+    assignments.
+    """
+
     def __init__(self, n_clusters):
         """
-        This class implements the traditional KMeans algorithm with hard
-        assignments:
-
-        https://en.wikipedia.org/wiki/K-means_clustering
-
         The KMeans algorithm has two steps:
 
         1. Update assignments
         2. Update the means
-
-        While you only have to implement the fit and predict functions to pass
-        the test cases, we recommend that you use an update_assignments
-        function and an update_means function internally for the class.
-
-        Use only numpy to implement this algorithm.
 
         Args:
             n_clusters (int): Number of clusters to cluster the given data

@@ -2,13 +2,14 @@
 Run K-means algorithm
 """
 import numpy as np
-from evaluation_utils import (
+
+from kmeans import KMeans
+from utilities.evaluation_utils import (
     create_confusion_matrix,
     display_confusion_matrix,
     display_eval_metrics,
     eval_metrics_from_confusion_matrix,
 )
-from kmeans import KMeans
 
 
 def read_data(file_name):

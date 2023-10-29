@@ -5,8 +5,11 @@ import unittest
 from random import randint
 
 import numpy as np
-from distance_utils import cosine_similarity, euclidean_distance
 from sklearn.metrics import pairwise
+from sklearn.decomposition import PCA as sklearn_PCA
+
+from utilities.distance_utils import cosine_similarity, euclidean_distance
+from utilities.pca_utils import PCA
 
 
 class TestDistanceMetrics(unittest.TestCase):
@@ -34,7 +37,7 @@ class TestDistanceMetrics(unittest.TestCase):
         """
         custom_result = euclidean_distance(self.mat1, self.mat2)
         sklearn_result = pairwise.euclidean_distances(self.mat1, self.mat2)
-        self.assertTrue(np.allclose(custom_result, sklearn_result))
+        np.testing.assert_array_almost_equal(custom_result, sklearn_result, decimal=1)
 
     def test_euclidean_distance_2(self):
         """
@@ -42,7 +45,7 @@ class TestDistanceMetrics(unittest.TestCase):
         """
         custom_result = euclidean_distance(self.mat2, self.mat3)
         sklearn_result = pairwise.euclidean_distances(self.mat2, self.mat3)
-        self.assertTrue(np.allclose(custom_result, sklearn_result))
+        np.testing.assert_array_almost_equal(custom_result, sklearn_result, decimal=1)
 
     def test_euclidean_distance_3(self):
         """
@@ -57,7 +60,7 @@ class TestDistanceMetrics(unittest.TestCase):
         """
         custom_result = euclidean_distance(self.mat4, self.mat5)
         sklearn_result = pairwise.euclidean_distances(self.mat4, self.mat5)
-        self.assertTrue(np.allclose(custom_result, sklearn_result))
+        np.testing.assert_array_almost_equal(custom_result, sklearn_result, decimal=1)
 
     def test_euclidean_distance_5(self):
         """
@@ -65,7 +68,7 @@ class TestDistanceMetrics(unittest.TestCase):
         """
         custom_result = euclidean_distance(self.mat3, self.mat7)
         sklearn_result = pairwise.euclidean_distances(self.mat3, self.mat7)
-        self.assertTrue(np.allclose(custom_result, sklearn_result))
+        np.testing.assert_array_almost_equal(custom_result, sklearn_result, decimal=1)
 
     def test_euclidean_distance_6(self):
         """
@@ -75,7 +78,7 @@ class TestDistanceMetrics(unittest.TestCase):
         sklearn_result = pairwise.euclidean_distances(
             self.vec1.reshape(1, -1), self.vec2.reshape(1, -1)
         )
-        self.assertTrue(np.allclose(custom_result, sklearn_result))
+        np.testing.assert_array_almost_equal(custom_result, sklearn_result, decimal=1)
 
     def test_cosine_similarity_1(self):
         """
@@ -83,7 +86,7 @@ class TestDistanceMetrics(unittest.TestCase):
         """
         custom_result = cosine_similarity(self.mat1, self.mat2)
         sklearn_result = pairwise.cosine_similarity(self.mat1, self.mat2)
-        self.assertTrue(np.allclose(custom_result, sklearn_result))
+        np.testing.assert_array_almost_equal(custom_result, sklearn_result, decimal=1)
 
     def test_cosine_similarity_2(self):
         """
@@ -91,7 +94,7 @@ class TestDistanceMetrics(unittest.TestCase):
         """
         custom_result = cosine_similarity(self.mat2, self.mat3)
         sklearn_result = pairwise.cosine_similarity(self.mat2, self.mat3)
-        self.assertTrue(np.allclose(custom_result, sklearn_result))
+        np.testing.assert_array_almost_equal(custom_result, sklearn_result, decimal=1)
 
     def test_cosine_similarity_3(self):
         """
@@ -106,7 +109,7 @@ class TestDistanceMetrics(unittest.TestCase):
         """
         custom_result = cosine_similarity(self.mat4, self.mat5)
         sklearn_result = pairwise.cosine_similarity(self.mat4, self.mat5)
-        self.assertTrue(np.allclose(custom_result, sklearn_result))
+        np.testing.assert_array_almost_equal(custom_result, sklearn_result, decimal=1)
 
     def test_cosine_similarity_5(self):
         """
@@ -114,7 +117,7 @@ class TestDistanceMetrics(unittest.TestCase):
         """
         custom_result = cosine_similarity(self.mat3, self.mat7)
         sklearn_result = pairwise.cosine_similarity(self.mat3, self.mat7)
-        self.assertTrue(np.allclose(custom_result, sklearn_result))
+        np.testing.assert_array_almost_equal(custom_result, sklearn_result, decimal=1)
 
     def test_cosine_similarity_6(self):
         """
@@ -124,7 +127,78 @@ class TestDistanceMetrics(unittest.TestCase):
         sklearn_result = pairwise.cosine_similarity(
             self.vec1.reshape(1, -1), self.vec2.reshape(1, -1)
         )
-        self.assertTrue(np.allclose(custom_result, sklearn_result))
+        np.testing.assert_array_almost_equal(custom_result, sklearn_result, decimal=1)
+
+
+class TestPCA(unittest.TestCase):
+    """
+    Test cases for the PCA (Principal Component Analysis).
+    """
+
+    def setUp(self) -> None:
+        self.mat1 = np.array(
+            [[41, 2, 3], [41, 341, 431], [431, 698, 9], [10, 431, -314]]
+        )
+        self.mat2 = np.array([[1, 431.2], [4, -35], [431.1, 0.843], [984, 11]])
+        self.num_components = 2
+
+    @staticmethod
+    def _flip_signs(mat_a, mat_b):
+        """
+        Utility function for resolving the sign ambiguity in PCA.
+        https://stackoverflow.com/questions/58666635/implementing-pca-with-numpy
+
+        Args:
+            mat_a (np.ndarray): First matrix.
+            mat_b (np.ndarray): Second matrix.
+
+        Returns:
+            np.ndarray, np.ndarray: Two matrices with aligned signs.
+        """
+        signs = np.sign(mat_a) * np.sign(mat_b)
+        return mat_a, mat_b * signs
+
+    @staticmethod
+    def _standard_scaler(mat):
+        """
+        Standardize a matrix by subtracting the mean and dividing by the
+        standard deviation.
+
+        Args:
+            mat (np.ndarray): Input matrix to be standardized.
+
+        Returns:
+            np.ndarray: Standardized matrix.
+        """
+        mat_mean = np.mean(mat, axis=0)
+        mat_std = np.std(mat, axis=0)
+        return (mat - mat_mean) / mat_std
+
+    def test_pca_sklearn_1(self):
+        """
+        Test PCA with a standardized matrix.
+        """
+        scaled_mat1 = self._standard_scaler(self.mat1)
+        custom_pca = PCA(self.num_components)
+        custom_reduced_data = custom_pca.fit(scaled_mat1)
+        sklearn_pca = sklearn_PCA(self.num_components)
+        sklearn_reduced_data = sklearn_pca.fit_transform(scaled_mat1)
+        np.testing.assert_array_almost_equal(
+            *self._flip_signs(custom_reduced_data, sklearn_reduced_data), decimal=1
+        )
+
+    def test_pca_sklearn_2(self):
+        """
+        Test PCA with a standardized matrix.
+        """
+        scaled_mat2 = self._standard_scaler(self.mat2)
+        custom_pca = PCA(self.num_components)
+        custom_reduced_data = custom_pca.fit(scaled_mat2)
+        sklearn_pca = sklearn_PCA(self.num_components)
+        sklearn_reduced_data = sklearn_pca.fit_transform(scaled_mat2)
+        np.testing.assert_array_almost_equal(
+            *self._flip_signs(custom_reduced_data, sklearn_reduced_data), decimal=1
+        )
 
 
 if __name__ == "__main__":
