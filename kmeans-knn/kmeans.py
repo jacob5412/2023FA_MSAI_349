@@ -1,28 +1,27 @@
 """
 K-means
 """
-import distance_utils
+import logging
+
 import numpy as np
+from utilities import distance_utils
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("kmeans")
 
 
 class KMeans:
+    """
+    This class implements the traditional KMeans algorithm with hard
+    assignments.
+    """
+
     def __init__(self, n_clusters):
         """
-        This class implements the traditional KMeans algorithm with hard
-        assignments:
-
-        https://en.wikipedia.org/wiki/K-means_clustering
-
         The KMeans algorithm has two steps:
 
         1. Update assignments
         2. Update the means
-
-        While you only have to implement the fit and predict functions to pass
-        the test cases, we recommend that you use an update_assignments
-        function and an update_means function internally for the class.
-
-        Use only numpy to implement this algorithm.
 
         Args:
             n_clusters (int): Number of clusters to cluster the given data
@@ -36,7 +35,7 @@ class KMeans:
         self,
         features,
         metric="euclidean",
-        rtol_threshold=1e-6,
+        rtol_threshold=1e-5,
         atol_threshold=1e-7,
         n_iterations=10000,
     ):
@@ -65,18 +64,22 @@ class KMeans:
     def predict(self, features, labels, metric="euclidean"):
         """
         Given features, an np.ndarray of size (n_samples, n_features), predict
-        cluster membership labels.
+        labels based on weighted voting.
 
         Args:
             features (np.ndarray): array containing inputs of size
             (n_samples, n_features).
             labels (np.ndarray): array containing input labels.
+            metric (str): distance metric to use (e.g., "euclidean").
+
         Returns:
             predictions (np.ndarray): predicted cluster membership for each
-            features, of size (n_samples,). Each element of the array is the
+            feature, of size (n_samples,). Each element of the array is the
             index of the cluster the sample belongs to.
         """
-        cluster_assignments = self._update_cluster_assignments(features, metric)
+        distance_metric = getattr(distance_utils, metric + "_distance")
+        distances = distance_metric(features, self.centroids)
+        cluster_assignments = np.argmin(distances, axis=1)
         predicted_labels = np.zeros_like(cluster_assignments)
         cluster_labels = np.unique(cluster_assignments)
 
@@ -84,7 +87,9 @@ class KMeans:
             cluster_mask = cluster_assignments == cluster_id
             if np.sum(cluster_mask) > 0:
                 true_labels = labels[cluster_mask]
-                majority_label = np.argmax(np.bincount(true_labels))
+                weights = 10.0 / (1.0 + distances[cluster_mask, cluster_id])
+                weighted_votes = np.bincount(true_labels, weights=weights)
+                majority_label = np.argmax(weighted_votes)
                 predicted_labels[cluster_mask] = majority_label
         return predicted_labels
 
@@ -108,6 +113,10 @@ class KMeans:
             self.centroids, previous_centroids, rtol=rtol_threshold, atol=atol_threshold
         )
         max_iterations = n_iterations <= 0
+        if max_iterations:
+            logger.info("Max iterations has reached.")
+        if no_centroids_change:
+            logger.info("No more change in centroids.")
         return no_centroids_change or max_iterations
 
     def _update_cluster_assignments(self, features, metric):
