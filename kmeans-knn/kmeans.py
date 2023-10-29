@@ -1,131 +1,83 @@
-"""
-K-means
-"""
-import distance_utils
 import numpy as np
-
+import pandas as pd
+import matplotlib.pyplot as plt
 
 class KMeans:
     def __init__(self, n_clusters):
-        """
-        This class implements the traditional KMeans algorithm with hard
-        assignments:
-
-        https://en.wikipedia.org/wiki/K-means_clustering
-
-        The KMeans algorithm has two steps:
-
-        1. Update assignments
-        2. Update the means
-
-        While you only have to implement the fit and predict functions to pass
-        the test cases, we recommend that you use an update_assignments
-        function and an update_means function internally for the class.
-
-        Use only numpy to implement this algorithm.
-
-        Args:
-            n_clusters (int): Number of clusters to cluster the given data
-                              into.
-
-        """
         self.n_clusters = n_clusters
-        self.centroids = None
+        self.means = None
 
-    def fit(
-        self,
-        features,
-        metric="euclidean",
-        rtol_threshold=1e-6,
-        atol_threshold=1e-7,
-        n_iterations=10000,
-    ):
-        """
-        Fit KMeans to the given data using `self.n_clusters` number of
-        clusters. Features can have greater than 2 dimensions.
+    def fit(self, features, max_iters=10):
+        np.random.seed(0)
+        random_indices = np.random.choice(features.shape[0], self.n_clusters, replace=False)
+        self.means = features[random_indices]
 
-        Args:
-            features (np.ndarray): array containing inputs of size
-            (n_samples, n_features).
-        Returns:
-            None (saves model - means - internally)
-        """
+        for _ in range(max_iters):
+            # Update assignments
+            distances = np.linalg.norm(features[:, np.newaxis] - self.means, axis=2)
+            labels = np.argmin(distances, axis=1)
 
-        self.centroids = self._initialize_centroids(features)
-        previous_centroids = np.zeros_like(self.centroids)
+            # Update means
+            new_means = []
+            for i in range(self.n_clusters):
+                if np.sum(labels == i) > 0:
+                    new_cluster_mean = features[labels == i].mean(axis=0)
+                else:
+                    # If the cluster is empty, select a random point as the new center
+                    new_cluster_mean = features[np.random.choice(features.shape[0])]
+                new_means.append(new_cluster_mean)
 
-        while not self._has_converged(
-            previous_centroids, rtol_threshold, atol_threshold, n_iterations
-        ):
-            n_iterations -= 1
-            previous_centroids = self.centroids
-            cluster_assignments = self._update_cluster_assignments(features, metric)
-            self._update_centroids(features, cluster_assignments)
+            new_means = np.array(new_means)
 
-    def predict(self, features, labels, metric="euclidean"):
-        """
-        Given features, an np.ndarray of size (n_samples, n_features), predict
-        cluster membership labels.
+            if np.all(new_means == self.means):
+                break
 
-        Args:
-            features (np.ndarray): array containing inputs of size
-            (n_samples, n_features).
-            labels (np.ndarray): array containing input labels.
-        Returns:
-            predictions (np.ndarray): predicted cluster membership for each
-            features, of size (n_samples,). Each element of the array is the
-            index of the cluster the sample belongs to.
-        """
-        cluster_assignments = self._update_cluster_assignments(features, metric)
-        predicted_labels = np.zeros_like(cluster_assignments)
-        cluster_labels = np.unique(cluster_assignments)
+            self.means = new_means
 
-        for cluster_id in cluster_labels:
-            cluster_mask = cluster_assignments == cluster_id
-            if np.sum(cluster_mask) > 0:
-                true_labels = labels[cluster_mask]
-                majority_label = np.argmax(np.bincount(true_labels))
-                predicted_labels[cluster_mask] = majority_label
-        return predicted_labels
+    def predict(self, features):
+        distances = np.linalg.norm(features[:, np.newaxis] - self.means, axis=2)
+        labels = np.argmin(distances, axis=1)
+        return labels
 
-    def _initialize_centroids(self, features):
-        """
-        Randomly select n_clusters data points from features as initial means.
-        """
-        random_indices = np.random.choice(
-            features.shape[0], self.n_clusters, replace=False
-        )
-        return features[random_indices]
+# Load the data from CSV files
+train_data = pd.read_csv('train.csv')
+test_data = pd.read_csv('test.csv')
+valid_data = pd.read_csv('valid.csv')
 
-    def _has_converged(
-        self, previous_centroids, rtol_threshold, atol_threshold, n_iterations
-    ):
-        """
-        K-means converges after n_iterations or when current centroid and
-        previous centroid are within a certain threshold.
-        """
-        no_centroids_change = np.allclose(
-            self.centroids, previous_centroids, rtol=rtol_threshold, atol=atol_threshold
-        )
-        max_iterations = n_iterations <= 0
-        return no_centroids_change or max_iterations
+# Extract features from the data
+train_features = train_data.values
+test_features = test_data.values
+valid_features = valid_data.values
 
-    def _update_cluster_assignments(self, features, metric):
-        """
-        Update cluster assignments based on a distance metric.
-        """
-        distance_metric = getattr(distance_utils, metric + "_distance")
-        distances = distance_metric(features, self.centroids)
-        cluster_assignments = np.argmin(distances, axis=1)
-        return cluster_assignments
+# Define the number of clusters
+n_clusters = 3  # You can change this to your desired number of clusters
 
-    def _update_centroids(self, features, cluster_assignments):
-        """
-        Update centroids based on the new cluster assignments.
-        """
-        self.centroids = np.array(
-            [
-                np.mean(features[cluster_assignments == i], axis=0)
-                for i in range(self.n_clusters)
-            ]
-        )
+# Initialize and fit the KMeans model
+kmeans = KMeans(n_clusters)
+kmeans.fit(train_features, max_iters=10)  # Adjust the max_iters value as needed
+
+# Predict clusters for test and validation data
+test_predictions = kmeans.predict(test_features)
+valid_predictions = kmeans.predict(valid_features)
+
+# Plot the clusters for test and validation data
+plt.figure(figsize=(12, 6))
+
+# Test Data
+plt.subplot(1, 2, 1)
+plt.scatter(test_features[:, 0], test_features[:, 1], c=test_predictions, cmap='viridis')
+plt.scatter(kmeans.means[:, 0], kmeans.means[:, 1], c='red', marker='x', s=100)
+plt.title('Test Data Clusters')
+plt.xlabel('Feature 1')
+plt.ylabel('Feature 2')
+
+# Validation Data
+plt.subplot(1, 2, 2)
+plt.scatter(valid_features[:, 0], valid_features[:, 1], c=valid_predictions, cmap='viridis')
+plt.scatter(kmeans.means[:, 0], kmeans.means[:, 1], c='red', marker='x', s=100)
+plt.title('Validation Data Clusters')
+plt.xlabel('Feature 1')
+plt.ylabel('Feature 2')
+
+plt.tight_layout()
+plt.show()
