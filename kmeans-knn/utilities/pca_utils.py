@@ -39,6 +39,6 @@ class PCA:
         # Select the first n Eigenvectors
         eigen_vectors_subset = eigen_vectors_sorted[:, : self.num_components]
 
-        # Transfrom the data
+        # Transform the data
         features_reduced = np.dot(features_meaned, eigen_vectors_subset)
         return features_reduced
