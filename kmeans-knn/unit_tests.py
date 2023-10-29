@@ -7,6 +7,7 @@ from random import randint
 import numpy as np
 from sklearn.decomposition import PCA as sklearn_PCA
 from sklearn.metrics import pairwise
+
 from utilities.distance_utils import cosine_similarity, euclidean_distance
 from utilities.pca_utils import PCA
 
@@ -179,7 +180,8 @@ class TestPCA(unittest.TestCase):
         """
         scaled_mat1 = self._standard_scaler(self.mat1)
         custom_pca = PCA(self.num_components)
-        custom_reduced_data = custom_pca.fit(scaled_mat1)
+        custom_pca.fit(scaled_mat1)
+        custom_reduced_data = custom_pca.transform(scaled_mat1)
         sklearn_pca = sklearn_PCA(self.num_components)
         sklearn_reduced_data = sklearn_pca.fit_transform(scaled_mat1)
         np.testing.assert_array_almost_equal(
@@ -192,7 +194,8 @@ class TestPCA(unittest.TestCase):
         """
         scaled_mat2 = self._standard_scaler(self.mat2)
         custom_pca = PCA(self.num_components)
-        custom_reduced_data = custom_pca.fit(scaled_mat2)
+        custom_pca.fit(scaled_mat2)
+        custom_reduced_data = custom_pca.transform(scaled_mat2)
         sklearn_pca = sklearn_PCA(self.num_components)
         sklearn_reduced_data = sklearn_pca.fit_transform(scaled_mat2)
         np.testing.assert_array_almost_equal(

@@ -7,27 +7,29 @@ import numpy as np
 class PCA:
     """
     Performs PCA to reduce the dimensionality of the input features.
+
+    Args:
+        num_components (int): The number of principal components to retain.
     """
 
     def __init__(self, num_components):
         self.num_components = num_components
+        self.components = None
+        self.mean = None
 
     def fit(self, features):
         """
         Fit the PCA model to the input data and reduce its dimensionality.
 
-        Parameters:
+        Args:
             features (np.ndarray): Input data of shape (n_samples, n_features).
-
-        Returns:
-            np.ndarray: Reduced feature data of shape
-                        (n_samples, num_components).
         """
         # Center the data by subtracting the mean from each feature.
-        features_meaned = features - np.mean(features, axis=0)
+        self.mean = np.mean(features, axis=0)
+        features_centered = features - self.mean
 
         # Calculate the covariance matrix of the mean-centered data.
-        cov_mat = np.cov(features_meaned, rowvar=False)
+        cov_mat = np.cov(features_centered, rowvar=False)
 
         # Calculate Eigenvalues and Eigenvectors of the covariance matrix
         eigen_values, eigen_vectors = np.linalg.eigh(cov_mat)
@@ -37,8 +39,19 @@ class PCA:
         eigen_vectors_sorted = eigen_vectors[:, sorted_indices]
 
         # Select the first n Eigenvectors
-        eigen_vectors_subset = eigen_vectors_sorted[:, : self.num_components]
+        self.components = eigen_vectors_sorted[:, : self.num_components]
 
-        # Transform the data
-        features_reduced = np.dot(features_meaned, eigen_vectors_subset)
-        return features_reduced
+    def transform(self, features):
+        """
+        Transform new data using the previously fitted PCA model.
+
+        Args:
+            features (np.ndarray): New data of shape (n_samples, n_features).
+
+        Returns:
+            transformed_data (np.ndarray): Transformed data of shape
+                                           (n_samples, num_components).
+        """
+        features_centered = features - self.mean
+        transformed_data = np.dot(features_centered, self.components)
+        return transformed_data

@@ -12,7 +12,7 @@ def euclidean_distance(mat_a, mat_b):
 
     https://scikit-learn.org/stable/modules/generated/sklearn.metrics.pairwise.euclidean_distances.html
 
-    Parameters:
+    Args:
         mat_a (numpy.ndarray): The first matrix.
         mat_b (numpy.ndarray): The second matrix.
 
@@ -44,7 +44,7 @@ def cosine_similarity(mat_a, mat_b):
     Calculate the pairwise Cosine similarity between row vectors
     of two matrices.
 
-    Parameters:
+    Args:
         mat_a (numpy.ndarray): The first matrix.
         mat_b (numpy.ndarray): The second matrix.
 
