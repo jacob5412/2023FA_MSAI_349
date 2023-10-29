@@ -46,8 +46,9 @@ class KMeans:
         Args:
             features (np.ndarray): array containing inputs of size
             (n_samples, n_features).
-        Returns:
-            None (saves model - means - internally)
+            rtol_threshold (float): Relative tolerance for convergence.
+            atol_threshold (float): Absolute tolerance for convergence.
+            n_iterations (int): The maximum number of iterations.
         """
 
         self.centroids = self._initialize_centroids(features)
@@ -70,7 +71,8 @@ class KMeans:
             features (np.ndarray): array containing inputs of size
             (n_samples, n_features).
             labels (np.ndarray): array containing input labels.
-            metric (str): distance metric to use (e.g., "euclidean").
+            metric (str): distance metric to use (e.g., "euclidean"
+            or "cosine").
 
         Returns:
             predictions (np.ndarray): predicted cluster membership for each
