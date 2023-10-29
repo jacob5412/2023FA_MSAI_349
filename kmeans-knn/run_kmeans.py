@@ -1,9 +1,9 @@
 """
 Run K-means algorithm
 """
-import numpy as np
 import logging
 
+import numpy as np
 from kmeans import KMeans
 from utilities.evaluation_utils import (
     create_confusion_matrix,
@@ -12,8 +12,8 @@ from utilities.evaluation_utils import (
     eval_metrics_from_confusion_matrix,
 )
 from utilities.pca_utils import PCA
+from utilities.preprocessing_utils import GrayscaleScaler, StandardScaler
 from utilities.read_data import get_numerical_features, get_numerical_labels, read_data
-from utilities.preprocessing_utils import StandardScaler, GrayscaleScaler
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("kmeans-training")
