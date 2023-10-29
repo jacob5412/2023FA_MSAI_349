@@ -63,25 +63,26 @@ def get_numerical_features(data_set):
 
 
 if __name__ == "__main__":
-    validation_set = read_data("valid.csv")
     train_set = read_data("valid.csv")
-    validation_set_labels = np.array(get_numerical_labels(validation_set))
-    validation_set_features = np.array(get_numerical_features(validation_set))
     train_set_labels = np.array(get_numerical_labels(train_set))
     train_set_features = np.array(get_numerical_features(train_set))
 
+    validation_set = read_data("valid.csv")
+    validation_set_labels = np.array(get_numerical_labels(validation_set))
+    validation_set_features = np.array(get_numerical_features(validation_set))
+
     
-    knearest = KNearestNeighbor()
-    knearest.k = 5
+    knearest = KNearestNeighbor(5)
     knearest.fit(train_set_features,train_set_labels)
     predicted_labels = knearest.predict(
-        validation_set_features, validation_set_labels, metric="euclidean"
+        validation_set_features
     )
 
-    print(predicted_labels)
-    # confusion_mat = create_confusion_matrix(
-    #     n_clusters, validation_set_labels, predicted_labels
-    # )
-    # display_confusion_matrix(confusion_mat)
-    # eval_metrics = eval_metrics_from_confusion_matrix(confusion_mat)
-    # display_eval_metrics(eval_metrics)
+    num_classes = max(max(validation_set_labels), max(predicted_labels))+1
+    confusion_matrix = create_confusion_matrix(num_classes, validation_set_labels, predicted_labels)
+
+    display_confusion_matrix(confusion_matrix)
+
+    eval_metrics = eval_metrics_from_confusion_matrix(confusion_matrix)
+
+    display_eval_metrics(eval_metrics)

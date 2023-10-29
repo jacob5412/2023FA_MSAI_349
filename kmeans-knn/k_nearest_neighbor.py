@@ -42,12 +42,13 @@ class KNearestNeighbor:
             aggregator {str} -- How to aggregate a label across the `n_neighbors` nearest
                 neighbors. Can be one of 'mode', 'mean', or 'median'.
         """
-        self.k = None
         self.n_neighbors = n_neighbors
-        self.distance_measure = distance_measure
+        self.metric = distance_measure
         self.aggregator = aggregator
 
     def _get_distances(self, train_feature, test_feature, metric="euclidean"):
+        train_feature = train_feature.reshape(1, -1)  # Reshape to ensure it's 2D
+        test_feature = test_feature.reshape(1, -1)    # Reshape to ensure it's 2D
         distance_metric = getattr(distance_utils, metric + "_distance")
         distances = distance_metric(train_feature, test_feature)
         return distances
@@ -98,11 +99,11 @@ class KNearestNeighbor:
         for x_test_feature in self.X_test:
             dists = []
             for x_train_feature in self.X_train: 
-                distance = self.get_distances(x_train_feature, x_test_feature)
+                distance = self._get_distances(x_train_feature, x_test_feature)
                 dists.append(distance)
             y_sorted = [y for _, y in sorted(zip(dists, self.Y_train))]
-            neighbors.append(y_sorted[: self.k])
+            neighbors.append(y_sorted[: self.n_neighbors])
             
         return list(
-            map(self.most_common, neighbors if not ignore_first else neighbors[1:])
+            map(self._most_common, neighbors if not ignore_first else neighbors[1:])
         )
