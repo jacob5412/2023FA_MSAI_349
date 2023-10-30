@@ -33,7 +33,7 @@ def get_best_scaler(
     # Reducing Dimensions
     std_pca = PCA(num_components=600)
     std_pca.fit(scaled_training_set_features)
-    std_pca_training_set_features = std_pca.transform(training_set_features)
+    std_pca_training_set_features = std_pca.transform(scaled_training_set_features)
     std_pca_validation_set_features = std_pca.transform(scaled_validation_set_features)
 
     # Fitting data
@@ -59,7 +59,7 @@ def get_best_scaler(
     # Reducing Dimensions
     gtd_pca = PCA(num_components=600)
     gtd_pca.fit(scaled_training_set_features)
-    gtd_pca_training_set_features = gtd_pca.transform(training_set_features)
+    gtd_pca_training_set_features = gtd_pca.transform(scaled_training_set_features)
     gtd_pca_validation_set_features = gtd_pca.transform(scaled_validation_set_features)
 
     # Fitting data
