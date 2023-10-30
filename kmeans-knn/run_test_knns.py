@@ -12,6 +12,9 @@ from utilities.evaluation_utils import (
 from utilities.read_data import get_numerical_features, get_numerical_labels, read_data
 
 if __name__ == "__main__":
+    NUM_NEIGHBORS = 3
+    NUM_CLASSES = 3
+
     train_set = read_data("iris_dataset/train.csv")
     train_set_labels = np.array(get_numerical_labels(train_set, data_type=int))
     train_set_features = np.array(get_numerical_features(train_set, data_type=float))
@@ -25,12 +28,12 @@ if __name__ == "__main__":
     )
 
     print("--- Testing KNNs on Iris ---\n")
-    knearest = KNearestNeighbor(3, "mode")
+    knearest = KNearestNeighbor(NUM_NEIGHBORS, "mode")
     knearest.fit(train_set_features, train_set_labels)
     predicted_labels = knearest.predict(validation_set_features)
 
     confusion_matrix = create_confusion_matrix(
-        3, validation_set_labels, predicted_labels
+        NUM_CLASSES, validation_set_labels, predicted_labels
     )
     display_confusion_matrix(confusion_matrix)
     eval_metrics = eval_metrics_from_confusion_matrix(confusion_matrix)
