@@ -26,7 +26,6 @@ class KMeans:
         Args:
             n_clusters (int): Number of clusters to cluster the given data
                               into.
-
         """
         self.n_clusters = n_clusters
         self.centroids = None

@@ -17,7 +17,6 @@ class KNearestNeighbor:
         aggregator (str): The method for aggregating neighbor labels.
         metric (str): The distance metric used for comparing data points, i.e.,
         "mode" or "weighted_mode".
-
     """
 
     def __init__(self, n_neighbors: int, aggregator="mode", metric="euclidean") -> None:
@@ -38,7 +37,6 @@ class KNearestNeighbor:
 
         Returns:
             np.ndarray: An array of distances between the two features.
-
         """
         distance_metric = getattr(distance_utils, metric + "_distance")
         distances = distance_metric(train_feature, test_feature)
@@ -82,7 +80,6 @@ class KNearestNeighbor:
             features (np.ndarray): The features from the training set.
             labels (np.ndarray): The corresponding labels for the
             training data as integers.
-
         """
         self.features = features
         self.labels = labels
