@@ -12,7 +12,7 @@ def euclidean_distance(mat_a, mat_b):
 
     https://scikit-learn.org/stable/modules/generated/sklearn.metrics.pairwise.euclidean_distances.html
 
-    Parameters:
+    Args:
         mat_a (numpy.ndarray): The first matrix.
         mat_b (numpy.ndarray): The second matrix.
 
@@ -35,16 +35,16 @@ def euclidean_distance(mat_a, mat_b):
 
     l1_norm_a = np.sum(mat_a**2, axis=1, keepdims=True)
     l1_norm_b = np.sum(mat_b**2, axis=1, keepdims=True)
-    dist = np.sqrt(l1_norm_a - 2 * np.dot(mat_a, mat_b.T) + l1_norm_b.T)
+    dist = np.sqrt(np.maximum(l1_norm_a - 2 * np.dot(mat_a, mat_b.T) + l1_norm_b.T, 0))
     return dist
 
 
-def cosine_similarity(mat_a, mat_b):
+def cosine_distance(mat_a, mat_b):
     """
     Calculate the pairwise Cosine similarity between row vectors
     of two matrices.
 
-    Parameters:
+    Args:
         mat_a (numpy.ndarray): The first matrix.
         mat_b (numpy.ndarray): The second matrix.
 
@@ -68,4 +68,4 @@ def cosine_similarity(mat_a, mat_b):
     l2_norm_a = np.sqrt(np.sum(mat_a**2, axis=1, keepdims=True))
     l2_norm_b = np.sqrt(np.sum(mat_b**2, axis=1, keepdims=True))
     cosine_sim = np.dot(mat_a, mat_b.T) / (l2_norm_a * l2_norm_b.T)
-    return cosine_sim
+    return 1 - cosine_sim
