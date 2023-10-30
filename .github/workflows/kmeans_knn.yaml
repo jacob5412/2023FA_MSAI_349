@@ -36,5 +36,5 @@ jobs:
           python3 unit_tests.py
           python3 run_test_kmeans.py
           python3 run_test_soft_kmeans.py
-          python3 run_test_knearest.py
+          python3 run_test_knns.py
         working-directory: ./kmeans-knn

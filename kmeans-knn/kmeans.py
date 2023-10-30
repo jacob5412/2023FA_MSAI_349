@@ -72,7 +72,7 @@ class KMeans:
         Args:
             features (np.ndarray): array containing inputs of size
             (n_samples, n_features).
-            labels (np.ndarray): array containing input labels.
+            labels (np.ndarray): array containing integer input labels.
             metric (str): distance metric to use (e.g., "euclidean"
             or "cosine").
 

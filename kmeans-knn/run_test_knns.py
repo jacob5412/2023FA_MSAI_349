@@ -25,7 +25,7 @@ if __name__ == "__main__":
     )
 
     print("--- Testing KNNs on Iris ---\n")
-    knearest = KNearestNeighbor(3)
+    knearest = KNearestNeighbor(3, "mode")
     knearest.fit(train_set_features, train_set_labels)
     predicted_labels = knearest.predict(validation_set_features)
 
