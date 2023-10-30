@@ -1,107 +1,100 @@
+"""
+K-Nearest Neighbor Classifer
+"""
 import numpy as np
-import distance_utils
-from distances import euclidean_distances, manhattan_distances
+
+from collections import Counter
+from utilities import distance_utils
 
 
 class KNearestNeighbor:
-    def __init__(self, n_neighbors, distance_measure="euclidean", aggregator="mode"):
-        """
-        K-Nearest Neighbor is a straightforward algorithm that can be highly
-        effective. Training time is...well...is there any training? At test time, labels for
-        new points are predicted by comparing them to the nearest neighbors in the
-        training data.
+    """
+    A K-Nearest Neighbor Classifier.
 
-        ```distance_measure``` lets you switch between which distance measure you will
-        use to compare data points. The behavior is as follows:
+    Attributes:
+        n_neighbors (int): The number of nearest neighbors to consider during
+        prediction.
+        aggregator (str): The method for aggregating neighbor labels.
+        metric (str): The distance metric used for comparing data points.
 
-        If 'euclidean', use euclidean_distances, if 'manhattan', use manhattan_distances.
+    """
 
-        ```aggregator``` lets you alter how a label is predicted for a data point based
-        on its neighbors. If it's set to `mean`, it is the mean of the labels of the
-        neighbors. If it's set to `mode`, it is the mode of the labels of the neighbors.
-        If it is set to median, it is the median of the labels of the neighbors. If the
-        number of dimensions returned in the label is more than 1, the aggregator is
-        applied to each dimension independently. For example, if the labels of 3
-        closest neighbors are:
-            [
-                [1, 2, 3],
-                [2, 3, 4],
-                [3, 4, 5]
-            ]
-        And the aggregator is 'mean', applied along each dimension, this will return for
-        that point:
-            [
-                [2, 3, 4]
-            ]
-
-        Arguments:
-            n_neighbors {int} -- Number of neighbors to use for prediction.
-            distance_measure {str} -- Which distance measure to use. Can be one of
-                'euclidean' or 'manhattan'. This is the distance measure
-                that will be used to compare features to produce labels.
-            aggregator {str} -- How to aggregate a label across the `n_neighbors` nearest
-                neighbors. Can be one of 'mode', 'mean', or 'median'.
-        """
+    def __init__(self, n_neighbors, aggregator="mode", metric="euclidean"):
         self.n_neighbors = n_neighbors
-        self.metric = distance_measure
         self.aggregator = aggregator
+        self.metric = metric
 
-    def _get_distances(self, train_feature, test_feature, metric="euclidean"):
+    def _get_distances(self, train_feature, test_feature, metric):
+        """
+        Calculate the distances between training and test features.
+
+        Args:
+            train_feature (numpy.ndarray): The feature from the training set.
+            test_feature (numpy.ndarray): The feature from the test set.
+            metric (str): The distance metric to use for the calculation.
+
+        Returns:
+            numpy.ndarray: An array of distances between the two features.
+
+        """
         distance_metric = getattr(distance_utils, metric + "_distance")
         distances = distance_metric(train_feature, test_feature)
         return distances
-    
-    def _most_common(self, lst):
-        return max(set(lst), key=lst.count)
-        
-    def fit(self, features, targets):
-        """Fit features, a numpy array of size (n_samples, n_features). For a KNN, this
-        function should store the features and corresponding targets in class
-        variables that can be accessed in the `predict` function. Note that targets can
-        be multidimensional!
 
-        Arguments:
-            features {np.ndarray} -- Features of each data point, shape of (n_samples,
-                n_features).
-            targets {[type]} -- Target labels for each data point, shape of (n_samples,
-                n_dimensions).
+    def _label_voting(self, neighbors):
         """
-        self.X_train = features
-        self.Y_train = targets
-        
-    def predict(self, features, ignore_first=False):
-        """Predict from features, a numpy array of size (n_samples, n_features) Use the
-        training data to predict labels on the test features. For each testing sample, compare it
-        to the training samples. Look at the self.n_neighbors closest samples to the
-        test sample by comparing their feature vectors. The label for the test sample
-        is the determined by aggregating the K nearest neighbors in the training data.
+        Perform label voting among the nearest neighbors.
 
-        Note that when using KNN for imputation, the predicted labels are the imputed testing data
-        and the shape is (n_samples, n_features).
-
-        Arguments:
-            features {np.ndarray} -- Features of each data point, shape of (n_samples,
-                n_features).
-            ignore_first {bool} -- If this is True, then we ignore the closest point
-                when doing the aggregation. This is used for collaborative
-                filtering, where the closest point is itself and thus is not a neighbor.
-                In this case, we would use 1:(n_neighbors + 1).
+        Args:
+            neighbors (numpy.ndarray): An array of labels from the
+            nearest neighbors.
 
         Returns:
-            labels {np.ndarray} -- Labels for each data point, of shape (n_samples,
-                n_dimensions). This n_dimensions should be the same as n_dimensions of targets in fit function.
+            The label with the highest vote.
         """
-        self.X_test = features
+        if self.aggregator == "mode":
+            label_counts = Counter(neighbors)
+            most_common_labels = label_counts.most_common()
+            return most_common_labels[0][0]
 
-        neighbors = []
-        for x_test_feature in self.X_test:
-            dists = []
-            for x_train_feature in self.X_train: 
-                distance = self._get_distances(x_train_feature, x_test_feature)
-                dists.append(distance)
-            y_sorted = [y for _, y in sorted(zip(dists, self.Y_train))]
-            neighbors.append(y_sorted[: self.n_neighbors])
-            
-        return list(
-            map(self._most_common, neighbors if not ignore_first else neighbors[1:])
+    def fit(
+        self,
+        features,
+        labels,
+    ):
+        """
+        Fit the K-Nearest Neighbor classifier with training data.
+
+        Args:
+            features (numpy.ndarray): The features from the training set.
+            labels (list or numpy.ndarray): The corresponding labels for the
+            training data.
+
+        """
+        self.features = features
+        self.labels = labels
+
+    def predict(self, query, ignore_first=False, metric="euclidean"):
+        """
+        Predict labels for a query or a batch of queries.
+
+        Args:
+            query (numpy.ndarray): The query for which labels are to be
+            predicted.
+            ignore_first (bool): Whether to ignore the first neighbor label
+            (False by default).
+            metric (str): The distance metric to use for the prediction.
+
+        Returns:
+            The predicted labels for the query
+        """
+        distances = self._get_distances(self.features, query, metric)
+        sorted_indices = np.argsort(distances, axis=0)
+        sorted_labels = np.take(np.array(self.labels), sorted_indices, axis=0)
+        neighbors = sorted_labels[: self.n_neighbors]
+        predicted_labels = np.apply_along_axis(
+            self._label_voting,
+            axis=0,
+            arr=neighbors[1:] if ignore_first else neighbors,
         )
+        return predicted_labels
