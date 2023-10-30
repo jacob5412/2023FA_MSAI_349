@@ -16,7 +16,7 @@ class KMeans:
     assignments.
     """
 
-    def __init__(self, n_clusters):
+    def __init__(self, n_clusters) -> None:
         """
         The KMeans algorithm has two steps:
 
@@ -41,11 +41,13 @@ class KMeans:
     ):
         """
         Fit KMeans to the given data using `self.n_clusters` number of
-        clusters. Features can have greater than 2 dimensions.
+        clusters.
 
         Args:
             features (np.ndarray): array containing inputs of size
             (n_samples, n_features).
+            metric (str): distance metric to use (e.g., "euclidean"
+            or "cosine").
             rtol_threshold (float): Relative tolerance for convergence.
             atol_threshold (float): Absolute tolerance for convergence.
             n_iterations (int): The maximum number of iterations.
@@ -85,12 +87,16 @@ class KMeans:
         predicted_labels = np.zeros_like(cluster_assignments)
         cluster_labels = np.unique(cluster_assignments)
 
+        # for each cluster, find all the data points belonging to it
         for cluster_id in cluster_labels:
             cluster_mask = cluster_assignments == cluster_id
             if np.sum(cluster_mask) > 0:
                 true_labels = labels[cluster_mask]
+                # weight them based on their distance to the centroid
                 weights = 10.0 / (1.0 + distances[cluster_mask, cluster_id])
+                # weight votes based on these distances
                 weighted_votes = np.bincount(true_labels, weights=weights)
+                # find the most common label
                 majority_label = np.argmax(weighted_votes)
                 predicted_labels[cluster_mask] = majority_label
         return predicted_labels
@@ -98,6 +104,13 @@ class KMeans:
     def _initialize_centroids(self, features):
         """
         Randomly select n_clusters data points from features as initial means.
+
+        Args:
+            features (np.ndarray): array containing inputs of size
+            (n_samples, n_features).
+
+        Returns:
+            array containing data points of size (n_clusters, n_features).
         """
         random_indices = np.random.choice(
             features.shape[0], self.n_clusters, replace=False
@@ -110,6 +123,16 @@ class KMeans:
         """
         K-means converges after n_iterations or when current centroid and
         previous centroid are within a certain threshold.
+
+        Args:
+            previous_centroids (np.ndarray): array containing centroids
+            from previous time-step, of size (n_clusters, n_features).
+            rtol_threshold (float): Relative tolerance for convergence.
+            atol_threshold (float): Absolute tolerance for convergence.
+            n_iterations (int): The maximum number of iterations.
+
+        Returns:
+            True if k-means has converged, False otherwise.
         """
         no_centroids_change = np.allclose(
             self.centroids, previous_centroids, rtol=rtol_threshold, atol=atol_threshold
@@ -124,16 +147,35 @@ class KMeans:
     def _update_cluster_assignments(self, features, metric):
         """
         Update cluster assignments based on a distance metric.
+
+        Args:
+            features (np.ndarray): array containing inputs of size
+            (n_samples, n_features).
+            metric (str): The distance metric to use for the calculation.
+
+        Returns:
+            cluster_assignments (np.ndarray): array containing cluster
+            assignments of size (n_features, ).
         """
         distance_metric = getattr(distance_utils, metric + "_distance")
+        # distances (n_samples, n_clusters)
         distances = distance_metric(features, self.centroids)
+        # cluster assignments is a list of indices of least distance
         cluster_assignments = np.argmin(distances, axis=1)
         return cluster_assignments
 
     def _update_centroids(self, features, cluster_assignments):
         """
         Update centroids based on the new cluster assignments.
+
+        Args:
+            features (np.ndarray): array containing inputs of size
+            (n_samples, n_features).
+            cluster_assignments (np.ndarray): array containing cluster
+            assignments of size (n_features, ).
         """
+        # use cluster assignments as a mask to obtain features belonging
+        # to the same cluster
         self.centroids = np.array(
             [
                 np.mean(features[cluster_assignments == i], axis=0)

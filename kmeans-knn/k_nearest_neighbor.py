@@ -1,9 +1,9 @@
 """
 K-Nearest Neighbor Classifer
 """
-import numpy as np
-
 from collections import Counter
+
+import numpy as np
 from utilities import distance_utils
 
 
@@ -19,7 +19,7 @@ class KNearestNeighbor:
 
     """
 
-    def __init__(self, n_neighbors, aggregator="mode", metric="euclidean"):
+    def __init__(self, n_neighbors, aggregator="mode", metric="euclidean") -> None:
         self.n_neighbors = n_neighbors
         self.aggregator = aggregator
         self.metric = metric

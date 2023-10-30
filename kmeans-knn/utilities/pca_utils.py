@@ -8,11 +8,13 @@ class PCA:
     """
     Performs PCA to reduce the dimensionality of the input features.
 
+    https://www.askpython.com/python/examples/principal-component-analysis
+
     Args:
         num_components (int): The number of principal components to retain.
     """
 
-    def __init__(self, num_components):
+    def __init__(self, num_components) -> None:
         self.num_components = num_components
         self.components = None
         self.mean = None
@@ -52,6 +54,9 @@ class PCA:
             transformed_data (np.ndarray): Transformed data of shape
                                            (n_samples, num_components).
         """
+        # Center the features again
         features_centered = features - self.mean
+
+        # Transform it using the n Eigenvectors
         transformed_data = np.dot(features_centered, self.components)
         return transformed_data

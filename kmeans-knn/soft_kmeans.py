@@ -19,7 +19,7 @@ class SoftKMeans:
                            distribution.
     """
 
-    def __init__(self, n_clusters, sharpness=1.0):
+    def __init__(self, n_clusters, sharpness=1.0) -> None:
         self.n_clusters = n_clusters
         self.centroids = None
         self.sharpness = sharpness
@@ -55,6 +55,13 @@ class SoftKMeans:
     def _initialize_centroids(self, features):
         """
         Randomly select n_clusters data points from features as initial means.
+
+        Args:
+            features (np.ndarray): array containing inputs of size
+            (n_samples, n_features).
+
+        Returns:
+            Array containing floating points of size (n_clusters, n_features).
         """
         random_indices = np.random.choice(
             features.shape[0], self.n_clusters, replace=False
@@ -67,6 +74,16 @@ class SoftKMeans:
         """
         Soft K-means converges after n_iterations or when current centroid and
         previous centroid are within a certain threshold.
+
+        Args:
+            previous_centroids (np.ndarray): array containing centroids
+            from previous time-step, of size (n_clusters, n_features).
+            rtol_threshold (float): Relative tolerance for convergence.
+            atol_threshold (float): Absolute tolerance for convergence.
+            n_iterations (int): The maximum number of iterations.
+
+        Returns:
+            True if k-means has converged, False otherwise.
         """
         no_centroids_change = np.allclose(
             self.centroids, previous_centroids, rtol=rtol_threshold, atol=atol_threshold
@@ -81,8 +98,19 @@ class SoftKMeans:
     def _update_softmax_probabilities(self, features):
         """
         Update the softmax probabilities for each data point.
+
+        Args:
+            features (np.ndarray): array containing inputs of size
+            (n_samples, n_features).
+
+        Returns:
+            softmax_probabilities (np.ndarray): array containing
+            assignments probabilities of size (n_features, n_clusters).
         """
         # z_im = - beta * || x_i - mu_m ||_2
+        # subtract all centroids (n_clusters, n_features) from each
+        # feature (n_features, 1, n_clusters) and take its norm to
+        # get z_im (n_features, n_clusters)
         z_im = -self.sharpness * np.sum(
             (features[:, np.newaxis] - self.centroids) ** 2, axis=2
         )
@@ -90,18 +118,32 @@ class SoftKMeans:
         # Numerically Stable Softmax: https://jaykmody.com/blog/stable-softmax/
         # https://stackoverflow.com/questions/42599498/numerically-stable-softmax
         softmax_probabilities = np.exp(z_im - z_im.max(axis=1, keepdims=True))
+        # contains probability of i-th feature of being in the j-th cluster
         softmax_probabilities /= softmax_probabilities.sum(axis=1, keepdims=True)
         return softmax_probabilities
 
     def _update_centroids(self, features, softmax_probabilities):
         """
         Update the cluster centroids based on the given probabilities.
+
+        Args:
+            features (np.ndarray): array containing inputs of size
+            (n_samples, n_features).
+            softmax_probabilities (np.ndarray): array containing
+            assignments probabilities of size (n_features, n_clusters).
         """
+        # calculate the average weight of the features that belong to
+        # the current cluster based on their softmax probabilities
         for cluster in range(self.n_clusters):
+            # multiplying softmax probabilities (n_features, 1)
+            # with each data point (n_samples, n_features) to get a
+            # weighted_sum (n_clusters, )
             weighted_sum = np.sum(
                 softmax_probabilities[:, cluster][:, np.newaxis] * features, axis=0
             )
+            # total weight assigned to the cluster
             total_weight = softmax_probabilities[:, cluster].sum()
+            # to avoid division by 0, check is total is greater
             if total_weight > 0:
                 self.centroids[cluster] = weighted_sum / total_weight
 
@@ -125,11 +167,13 @@ class SoftKMeans:
         predicted_labels = np.zeros_like(cluster_assignments)
         cluster_labels = np.unique(cluster_assignments)
 
+        # for each cluster, find all the data points belonging to it
         for cluster_id in cluster_labels:
             cluster_mask = cluster_assignments == cluster_id
             if np.sum(cluster_mask) > 0:
                 true_labels = labels[cluster_mask]
                 votes = np.bincount(true_labels)
+                # find the most common label
                 majority_label = np.argmax(votes)
                 predicted_labels[cluster_mask] = majority_label
         return predicted_labels

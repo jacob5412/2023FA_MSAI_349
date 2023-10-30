@@ -54,7 +54,7 @@ def display_confusion_matrix(confusion_matrix):
 def eval_metrics_from_confusion_matrix(confusion_matrix):
     """
     Calculate class-specific accuracy, precision, recall, and overall accuracy
-    using a confusion matrix.
+    using a confusion matrix through one-vs-all.
 
     Args:
         confusion_matrix (np.ndarray): each element (i, j) represents the
@@ -68,27 +68,28 @@ def eval_metrics_from_confusion_matrix(confusion_matrix):
     """
     num_classes = confusion_matrix.shape[0]
     eval_metrics = {}
-
     for i in range(num_classes):
         eval_metrics[i] = {}
         true_positive = confusion_matrix[i, i]
+        # false positives = column sum - true positives
         false_positive = np.sum(confusion_matrix[:, i]) - true_positive
+        # false negatives =  row sum - true positives
         false_negative = np.sum(confusion_matrix[i, :]) - true_positive
+        # true negatives = sum of matrix - (false positives + false negatives + true positives)
         true_negatives = np.sum(confusion_matrix) - (
             false_positive + false_negative + true_positive
         )
+        # accuracy = sum of correct predictions / total predictions
         accuracy = (true_positive + true_negatives) / np.sum(confusion_matrix)
         precision = true_positive / (true_positive + false_positive)
         recall = true_positive / (true_positive + false_negative)
-
         eval_metrics[i]["accuracy"] = accuracy
         eval_metrics[i]["precision"] = precision
         eval_metrics[i]["recall"] = recall
-
+    # overall accuracy = sum of correct predictions (all true positives) / total predictions
     overall_accuracy = np.sum(np.diagonal(confusion_matrix)) / np.sum(confusion_matrix)
     eval_metrics["overall"] = {}
     eval_metrics["overall"]["accuracy"] = overall_accuracy
-
     return eval_metrics
 
 

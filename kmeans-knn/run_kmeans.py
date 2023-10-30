@@ -33,7 +33,7 @@ def get_best_scaler(
     # Reducing Dimensions
     std_pca = PCA(num_components=600)
     std_pca.fit(scaled_training_set_features)
-    std_pca_training_set_features = std_pca.transform(training_set_features)
+    std_pca_training_set_features = std_pca.transform(scaled_training_set_features)
     std_pca_validation_set_features = std_pca.transform(scaled_validation_set_features)
 
     # Fitting data
@@ -59,7 +59,7 @@ def get_best_scaler(
     # Reducing Dimensions
     gtd_pca = PCA(num_components=600)
     gtd_pca.fit(scaled_training_set_features)
-    gtd_pca_training_set_features = gtd_pca.transform(training_set_features)
+    gtd_pca_training_set_features = gtd_pca.transform(scaled_training_set_features)
     gtd_pca_validation_set_features = gtd_pca.transform(scaled_validation_set_features)
 
     # Fitting data
@@ -83,10 +83,10 @@ def get_best_scaler(
 
 
 if __name__ == "__main__":
-    training_set = read_data("train.csv")
+    training_set = read_data("mnist_dataset/train.csv")
     training_set_labels = np.array(get_numerical_labels(training_set))
     training_set_features = np.array(get_numerical_features(training_set))
-    validation_set = read_data("valid.csv")
+    validation_set = read_data("mnist_dataset/valid.csv")
     validation_set_labels = np.array(get_numerical_labels(validation_set))
     validation_set_features = np.array(get_numerical_features(validation_set))
     (trained_scaler, trained_pca, scaler_type) = get_best_scaler(

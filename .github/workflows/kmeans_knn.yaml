@@ -34,4 +34,7 @@ jobs:
       - name: Run scripts
         run: |
           python3 unit_tests.py
+          python3 run_test_kmeans.py
+          python3 run_test_soft_kmeans.py
+          python3 run_test_knearest.py
         working-directory: ./kmeans-knn
