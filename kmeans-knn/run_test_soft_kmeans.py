@@ -1,5 +1,5 @@
 """
-Run Soft K-means algorithm
+Testing Soft K-means on the Iris Dataset
 """
 import logging
 
@@ -25,14 +25,11 @@ if __name__ == "__main__":
     training_set_labels = np.array(get_numerical_labels(training_set, int))
     training_set_features = np.array(get_numerical_features(training_set, float))
 
-
     n_clusters = 3
     soft_kmeans = SoftKMeans(n_clusters)
     print("--- Training Soft K-means on Iris ---\n")
     soft_kmeans.fit(training_set_features)
-    predicted_labels = soft_kmeans.predict(
-        training_set_features, training_set_labels
-    )
+    predicted_labels = soft_kmeans.predict(training_set_features, training_set_labels)
     confusion_mat = create_confusion_matrix(
         n_clusters, training_set_labels, predicted_labels
     )

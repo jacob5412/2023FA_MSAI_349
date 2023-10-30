@@ -1,5 +1,5 @@
 """
-Test Run K-means algorithm
+Testing K-means on the Iris Dataset
 """
 import logging
 
@@ -23,7 +23,6 @@ if __name__ == "__main__":
     validation_set_features = np.array(get_numerical_features(validation_set, float))
     training_set_labels = np.array(get_numerical_labels(training_set, int))
     training_set_features = np.array(get_numerical_features(training_set, float))
-
 
     n_clusters = 3
     kmeans = KMeans(n_clusters)

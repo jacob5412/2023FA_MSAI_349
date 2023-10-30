@@ -1,32 +1,35 @@
 """
-Run KNN algorithm
+Testing KNN on the Iris Dataset
 """
 import numpy as np
+from k_nearest_neighbor import KNearestNeighbor
 from utilities.evaluation_utils import (
     create_confusion_matrix,
     display_confusion_matrix,
     display_eval_metrics,
     eval_metrics_from_confusion_matrix,
 )
-from k_nearest_neighbor import KNearestNeighbor
 from utilities.read_data import get_numerical_features, get_numerical_labels, read_data
 
-
 if __name__ == "__main__":
-    train_set = read_data("train.csv")
-    train_set_labels = np.array(get_numerical_labels(train_set))
-    train_set_features = np.array(get_numerical_features(train_set))
+    train_set = read_data("iris_dataset/train.csv")
+    train_set_labels = np.array(get_numerical_labels(train_set, data_type=int))
+    train_set_features = np.array(get_numerical_features(train_set, data_type=float))
 
-    validation_set = read_data("valid.csv")
-    validation_set_labels = np.array(get_numerical_labels(validation_set))
-    validation_set_features = np.array(get_numerical_features(validation_set))
+    validation_set = read_data("iris_dataset/valid.csv")
+    validation_set_labels = np.array(
+        get_numerical_labels(validation_set, data_type=int)
+    )
+    validation_set_features = np.array(
+        get_numerical_features(validation_set, data_type=float)
+    )
 
-    knearest = KNearestNeighbor(5)
+    knearest = KNearestNeighbor(3)
     knearest.fit(train_set_features, train_set_labels)
     predicted_labels = knearest.predict(validation_set_features)
 
     confusion_matrix = create_confusion_matrix(
-        10, validation_set_labels, predicted_labels
+        3, validation_set_labels, predicted_labels
     )
     display_confusion_matrix(confusion_matrix)
     eval_metrics = eval_metrics_from_confusion_matrix(confusion_matrix)

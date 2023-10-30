@@ -1,9 +1,9 @@
 """
 K-Nearest Neighbor Classifer
 """
-import numpy as np
-
 from collections import Counter
+
+import numpy as np
 from utilities import distance_utils
 
 
