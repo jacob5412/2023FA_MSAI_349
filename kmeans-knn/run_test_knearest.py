@@ -13,7 +13,7 @@ from utilities.read_data import get_numerical_features, get_numerical_labels, re
 
 
 if __name__ == "__main__":
-    train_set = read_data("valid.csv")
+    train_set = read_data("train.csv")
     train_set_labels = np.array(get_numerical_labels(train_set))
     train_set_features = np.array(get_numerical_features(train_set))
 
