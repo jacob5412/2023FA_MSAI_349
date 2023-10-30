@@ -39,7 +39,8 @@ class StandardScaler:
             features (np.ndarray): Input data of shape (n_samples, n_features).
 
         Returns:
-            np.ndarray: Scaled data with a mean of 0 and standard deviation of 1.
+            np.ndarray: Scaled data with a mean of 0 and standard deviation
+                        of 1.
         """
         return (features - self.mean) / (self.std + self.epsilon)
 

@@ -47,6 +47,7 @@ def get_numerical_features(data_set, data_type=int):
 
     Args:
         data_set (list): A list of label-feature pairs.
+        data_type (type): The data type to cast the labels to (int or float).
 
     Returns:
         list: A list of numerical features.

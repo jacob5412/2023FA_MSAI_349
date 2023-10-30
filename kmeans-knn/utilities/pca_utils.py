@@ -14,7 +14,7 @@ class PCA:
         num_components (int): The number of principal components to retain.
     """
 
-    def __init__(self, num_components):
+    def __init__(self, num_components) -> None:
         self.num_components = num_components
         self.components = None
         self.mean = None
