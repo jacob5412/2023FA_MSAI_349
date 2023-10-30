@@ -16,7 +16,7 @@ class KMeans:
     assignments.
     """
 
-    def __init__(self, n_clusters) -> None:
+    def __init__(self, n_clusters: int) -> None:
         """
         The KMeans algorithm has two steps:
 
@@ -33,12 +33,12 @@ class KMeans:
 
     def fit(
         self,
-        features,
+        features: np.ndarray,
         metric="euclidean",
         rtol_threshold=1e-5,
         atol_threshold=1e-7,
         n_iterations=10000,
-    ):
+    ) -> None:
         """
         Fit KMeans to the given data using `self.n_clusters` number of
         clusters.
@@ -64,7 +64,9 @@ class KMeans:
             cluster_assignments = self._update_cluster_assignments(features, metric)
             self._update_centroids(features, cluster_assignments)
 
-    def predict(self, features, labels, metric="euclidean"):
+    def predict(
+        self, features: np.ndarray, labels: np.ndarray[int], metric="euclidean"
+    ) -> np.ndarray[int]:
         """
         Given features, an np.ndarray of size (n_samples, n_features), predict
         labels based on weighted voting.
@@ -84,7 +86,7 @@ class KMeans:
         distance_metric = getattr(distance_utils, metric + "_distance")
         distances = distance_metric(features, self.centroids)
         cluster_assignments = np.argmin(distances, axis=1)
-        predicted_labels = np.zeros_like(cluster_assignments)
+        predicted_labels = np.zeros_like(cluster_assignments, dtype=int)
         cluster_labels = np.unique(cluster_assignments)
 
         # for each cluster, find all the data points belonging to it
@@ -101,7 +103,7 @@ class KMeans:
                 predicted_labels[cluster_mask] = majority_label
         return predicted_labels
 
-    def _initialize_centroids(self, features):
+    def _initialize_centroids(self, features: np.ndarray) -> np.ndarray:
         """
         Randomly select n_clusters data points from features as initial means.
 
@@ -118,8 +120,12 @@ class KMeans:
         return features[random_indices]
 
     def _has_converged(
-        self, previous_centroids, rtol_threshold, atol_threshold, n_iterations
-    ):
+        self,
+        previous_centroids: np.ndarray,
+        rtol_threshold: float,
+        atol_threshold: float,
+        n_iterations: int,
+    ) -> bool:
         """
         K-means converges after n_iterations or when current centroid and
         previous centroid are within a certain threshold.
@@ -144,7 +150,9 @@ class KMeans:
             logger.info("No more change in centroids.")
         return no_centroids_change or max_iterations
 
-    def _update_cluster_assignments(self, features, metric):
+    def _update_cluster_assignments(
+        self, features: np.ndarray, metric: str
+    ) -> np.ndarray:
         """
         Update cluster assignments based on a distance metric.
 
@@ -164,7 +172,9 @@ class KMeans:
         cluster_assignments = np.argmin(distances, axis=1)
         return cluster_assignments
 
-    def _update_centroids(self, features, cluster_assignments):
+    def _update_centroids(
+        self, features: np.ndarray, cluster_assignments: np.ndarray
+    ) -> None:
         """
         Update centroids based on the new cluster assignments.
 

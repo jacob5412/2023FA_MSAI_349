@@ -19,18 +19,18 @@ class SoftKMeans:
                            distribution.
     """
 
-    def __init__(self, n_clusters, sharpness=1.0) -> None:
+    def __init__(self, n_clusters: int, sharpness=1.0) -> None:
         self.n_clusters = n_clusters
         self.centroids = None
         self.sharpness = sharpness
 
     def fit(
         self,
-        features,
+        features: np.ndarray,
         rtol_threshold=1e-5,
         atol_threshold=1e-7,
         n_iterations=10000,
-    ):
+    ) -> None:
         """
         Fit the Soft K-means model to the input data.
 
@@ -52,7 +52,7 @@ class SoftKMeans:
             softmax_probabilities = self._update_softmax_probabilities(features)
             self._update_centroids(features, softmax_probabilities)
 
-    def _initialize_centroids(self, features):
+    def _initialize_centroids(self, features: np.ndarray) -> np.ndarray:
         """
         Randomly select n_clusters data points from features as initial means.
 
@@ -69,8 +69,12 @@ class SoftKMeans:
         return features[random_indices].astype(float)
 
     def _has_converged(
-        self, previous_centroids, rtol_threshold, atol_threshold, n_iterations
-    ):
+        self,
+        previous_centroids: np.ndarray,
+        rtol_threshold: float,
+        atol_threshold: float,
+        n_iterations: int,
+    ) -> bool:
         """
         Soft K-means converges after n_iterations or when current centroid and
         previous centroid are within a certain threshold.
@@ -95,7 +99,7 @@ class SoftKMeans:
             logger.info("No more change in centroids.")
         return no_centroids_change or max_iterations
 
-    def _update_softmax_probabilities(self, features):
+    def _update_softmax_probabilities(self, features: np.ndarray) -> np.ndarray:
         """
         Update the softmax probabilities for each data point.
 
@@ -122,7 +126,9 @@ class SoftKMeans:
         softmax_probabilities /= softmax_probabilities.sum(axis=1, keepdims=True)
         return softmax_probabilities
 
-    def _update_centroids(self, features, softmax_probabilities):
+    def _update_centroids(
+        self, features: np.ndarray, softmax_probabilities: np.ndarray
+    ) -> None:
         """
         Update the cluster centroids based on the given probabilities.
 
@@ -147,7 +153,7 @@ class SoftKMeans:
             if total_weight > 0:
                 self.centroids[cluster] = weighted_sum / total_weight
 
-    def predict(self, features, labels):
+    def predict(self, features: np.ndarray, labels: np.ndarray[int]) -> np.ndarray[int]:
         """
         Predict cluster assignments based on majority voting within each
         cluster.

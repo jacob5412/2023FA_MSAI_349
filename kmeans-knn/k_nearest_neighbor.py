@@ -20,12 +20,14 @@ class KNearestNeighbor:
 
     """
 
-    def __init__(self, n_neighbors, aggregator="mode", metric="euclidean") -> None:
+    def __init__(self, n_neighbors: int, aggregator="mode", metric="euclidean") -> None:
         self.n_neighbors = n_neighbors
         self.aggregator = aggregator
         self.metric = metric
 
-    def _get_distances(self, train_feature, test_feature, metric):
+    def _get_distances(
+        self, train_feature: np.ndarray, test_feature: np.ndarray, metric: str
+    ) -> np.ndarray:
         """
         Calculate the distances between training and test features.
 
@@ -42,7 +44,9 @@ class KNearestNeighbor:
         distances = distance_metric(train_feature, test_feature)
         return distances
 
-    def _label_voting(self, neighbors, neighbor_distances):
+    def _label_voting(
+        self, neighbors: np.ndarray, neighbor_distances: np.ndarray
+    ) -> int:
         """
         Perform label voting among the nearest neighbors.
 
@@ -68,9 +72,9 @@ class KNearestNeighbor:
 
     def fit(
         self,
-        features,
-        labels,
-    ):
+        features: np.ndarray,
+        labels: np.ndarray[int],
+    ) -> None:
         """
         Fit the K-Nearest Neighbor classifier with training data.
 
@@ -83,7 +87,9 @@ class KNearestNeighbor:
         self.features = features
         self.labels = labels
 
-    def predict(self, query, ignore_first=False, metric="euclidean"):
+    def predict(
+        self, query: np.ndarray, ignore_first=False, metric="euclidean"
+    ) -> np.ndarray[int]:
         """
         Predict labels for a query or a batch of queries.
 
