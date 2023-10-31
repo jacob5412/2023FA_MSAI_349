@@ -1,13 +1,12 @@
 """
-Run K-means algorithm
+Run Soft K-means algorithm
 """
 import logging
 
 import numpy as np
 
-from kmeans import KMeans
-from kmeans_hyperparams import (
-    get_best_distance,
+from soft_kmeans import SoftKMeans
+from soft_kmeans_hyperparams import (
     get_best_k,
     get_best_pca_components,
     get_best_scaler,
@@ -23,7 +22,7 @@ from utilities.preprocessing_utils import GrayscaleScaler, StandardScaler
 from utilities.read_data import get_numerical_features, get_numerical_labels, read_data
 
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("kmeans-training")
+logger = logging.getLogger("soft-kmeans-training")
 
 
 if __name__ == "__main__":
@@ -49,7 +48,7 @@ if __name__ == "__main__":
         [500, 550, 600, 650, 700, 750],
         K_COMPONENTS,
     )
-    best_pca_num_components = 750  # based on empirical evidence
+    best_pca_num_components = 700  # based on empirical evidence
     logger.info("PCA with %d components performed the best.", best_pca_num_components)
     best_scaler = get_best_scaler(
         training_set_features,
@@ -72,17 +71,6 @@ if __name__ == "__main__":
     )
     best_k = 13  # based on empirical evidence
     logger.info("%d performed the best.", best_k)
-    best_distance_metric = get_best_distance(
-        training_set_features,
-        validation_set_features,
-        validation_set_labels,
-        NUM_CLASSES,
-        best_k,  # passing best param
-        best_pca_num_components,  # passing best param
-        best_scaler,  # passing best param
-    )
-    best_distance_metric = "euclidean"  # based on empirical evidence
-    logger.info("%s performed the best.", best_distance_metric)
 
     # Training & testing final K-means
     if best_scaler == "GrayscaleScaler":
@@ -105,10 +93,10 @@ if __name__ == "__main__":
     transformed_train_features = pca.transform(scaled_training_set_features)
     transformed_test_features = pca.transform(scaled_testing_set_features)
 
-    kmeans = KMeans(best_k)
-    kmeans.fit(transformed_train_features, best_distance_metric)
-    predicted_labels = kmeans.predict(
-        transformed_test_features, testing_set_labels, best_distance_metric
+    soft_kmeans = SoftKMeans(best_k)
+    soft_kmeans.fit(transformed_train_features)
+    predicted_labels = soft_kmeans.predict(
+        transformed_test_features, testing_set_labels
     )
     confusion_mat = create_confusion_matrix(
         NUM_CLASSES, testing_set_labels, predicted_labels
