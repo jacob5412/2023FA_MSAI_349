@@ -49,7 +49,7 @@ if __name__ == "__main__":
         [500, 550, 600, 650, 700, 750],
         K_COMPONENTS,
     )
-    best_pca_num_components = 750  # based on experimental results
+    best_pca_num_components = 750  # based on empirical evidence
     logger.info("PCA with %d components performed the best.", best_pca_num_components)
     best_scaler = get_best_scaler(
         training_set_features,
@@ -59,7 +59,7 @@ if __name__ == "__main__":
         K_COMPONENTS,
         best_pca_num_components,
     )
-    best_scaler = "GrayscaleScaler"  # based on experimental results
+    best_scaler = "GrayscaleScaler"  # based on empirical evidence
     logger.info("%s performed the best.", best_scaler)
     best_k = get_best_k(
         training_set_features,
@@ -70,7 +70,7 @@ if __name__ == "__main__":
         best_pca_num_components,
         best_scaler,
     )
-    best_k = 13  # based on experimental results
+    best_k = 13  # based on empirical evidence
     logger.info("%d performed the best.", best_k)
     best_distance_metric = get_best_distance(
         training_set_features,
@@ -81,7 +81,7 @@ if __name__ == "__main__":
         best_pca_num_components,
         best_scaler,
     )
-    best_distance_metric = "euclidean"  # based on experimental results
+    best_distance_metric = "euclidean"  # based on empirical evidence
     logger.info("%s performed the best.", best_distance_metric)
 
     # Training & testing final K-means
