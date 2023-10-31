@@ -1,13 +1,9 @@
 """
 K-means
 """
-import logging
-
 import numpy as np
-from utilities import distance_utils
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("kmeans")
+from utilities import distance_utils
 
 
 class KMeans:
@@ -143,10 +139,6 @@ class KMeans:
             self.centroids, previous_centroids, rtol=rtol_threshold, atol=atol_threshold
         )
         max_iterations = n_iterations <= 0
-        if max_iterations:
-            logger.info("Max iterations has reached.")
-        if no_centroids_change:
-            logger.info("No more change in centroids.")
         return no_centroids_change or max_iterations
 
     def _update_cluster_assignments(
