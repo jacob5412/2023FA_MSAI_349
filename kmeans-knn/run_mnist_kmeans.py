@@ -5,10 +5,8 @@ import logging
 
 import numpy as np
 
-from k_selection import get_best_k
 from kmeans import KMeans
-from pca_components_selection import get_best_pca_components
-from scaler_selection import get_best_scaler
+from kmeans_hyperparams import get_best_k, get_best_pca_components, get_best_scaler
 from utilities.evaluation_utils import (
     create_confusion_matrix,
     display_confusion_matrix,
@@ -35,6 +33,7 @@ if __name__ == "__main__":
     testing_set_features = np.array(get_numerical_features(testing_set))
 
     NUM_CLASSES = 10
+    K_COMPONENTS = 11
 
     # Hyperparameter-Tuning
     best_pca_num_components = get_best_pca_components(
@@ -43,17 +42,19 @@ if __name__ == "__main__":
         validation_set_labels,
         NUM_CLASSES,
         [500, 550, 600, 650, 700, 750],
-        KMeans(11),
+        K_COMPONENTS,
     )
+    best_pca_num_components = 750  # based on experimental results
     logger.info("PCA with %d components performed the best.", best_pca_num_components)
     best_scaler = get_best_scaler(
         training_set_features,
         validation_set_features,
         validation_set_labels,
         NUM_CLASSES,
-        KMeans(11),
+        K_COMPONENTS,
         best_pca_num_components,
     )
+    best_scaler = "GrayscaleScaler"  # based on experimental results
     logger.info("%s performed the best.", best_scaler)
     best_k = get_best_k(
         training_set_features,
@@ -61,11 +62,21 @@ if __name__ == "__main__":
         validation_set_labels,
         NUM_CLASSES,
         [10, 11, 12, 13, 14, 15],
-        KMeans,
         best_pca_num_components,
         best_scaler,
     )
+    best_k = 13  # based on experimental results
     logger.info("%d performed the best.", best_k)
+    best_distance_metric = get_best_distance(
+        training_set_features,
+        validation_set_features,
+        validation_set_labels,
+        NUM_CLASSES,
+        best_k,
+        best_pca_num_components,
+        best_scaler,
+    )
+    logger.info("%s performed the best.", best_distance_metric)
 
     # Training & testing final K-means
     if best_scaler == "GrayscaleScaler":

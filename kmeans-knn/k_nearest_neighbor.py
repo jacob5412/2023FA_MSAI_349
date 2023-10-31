@@ -20,7 +20,7 @@ class KNearestNeighbor:
         "mode" or "weighted_mode".
     """
 
-    def __init__(self, n_neighbors: int, aggregator="mode", metric="euclidean") -> None:
+    def __init__(self, n_neighbors: int, metric="euclidean", aggregator="mode") -> None:
         self.n_neighbors = n_neighbors
         self.aggregator = aggregator
         self.metric = metric
@@ -86,7 +86,7 @@ class KNearestNeighbor:
         self.labels = labels
 
     def predict(
-        self, query: np.ndarray, ignore_first=False, metric="euclidean"
+        self, query: np.ndarray, metric="euclidean", ignore_first=False
     ) -> np.ndarray[int]:
         """
         Predict labels for a query or a batch of queries.

@@ -21,7 +21,7 @@ class TestDistanceMetrics(unittest.TestCase):
     def setUp(self) -> None:
         self.mat1 = np.array([[1, 2, 32], [4, 5, 6]])
         self.mat2 = np.array([[4, 543, 6], [7.2, 8, 9]])
-        self.mat3 = np.array([[1.3, 2.4311, 4134], [-341, 5.0, 6.0]])
+        self.mat3 = np.array([[0.00013, 0.4311, 4134], [-341, 5.0, 6.0]])
         random_mat_nrows = randint(1, 10)
         random_mat_ncols = randint(1, 10)
         self.mat4 = np.random.rand(random_mat_nrows, random_mat_ncols)
