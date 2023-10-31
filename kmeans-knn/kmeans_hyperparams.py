@@ -117,6 +117,7 @@ def get_best_scaler(
 
         # Train Kmeans
         kmeans = KMeans(k_components)
+        kmeans.fit(transformed_train_features)
         predicted_labels = kmeans.predict(
             transformed_valid_features, shuffled_validation_set_labels
         )
@@ -189,7 +190,7 @@ def get_best_k(
             transformed_valid_features = pca.transform(scaled_validation_set_features)
 
             # Train Kmeans
-            kmeans = Kmeans(k)
+            kmeans = KMeans(k)
             kmeans.fit(transformed_train_features)
             predicted_labels = kmeans.predict(
                 transformed_valid_features, shuffled_validation_set_labels
@@ -354,8 +355,8 @@ def get_best_distance(
             transformed_valid_features = pca.transform(scaled_validation_set_features)
 
             # Train Kmeans
-            kmeans = Kmeans(k_components, distance)
-            kmeans.fit(transformed_train_features)
+            kmeans = KMeans(k_components)
+            kmeans.fit(transformed_train_features, distance)
             predicted_labels = kmeans.predict(
                 transformed_valid_features, shuffled_validation_set_labels, distance
             )
@@ -369,7 +370,7 @@ def get_best_distance(
         avg_accuracies[distance] = total_accuracy / num_iterations
 
         logger.info(
-            "Average Accuracy for distance %d is %.3f",
+            "Average Accuracy for distance %s is %.3f",
             distance,
             avg_accuracies[distance],
         )

@@ -6,7 +6,12 @@ import logging
 import numpy as np
 
 from kmeans import KMeans
-from kmeans_hyperparams import get_best_k, get_best_pca_components, get_best_scaler
+from kmeans_hyperparams import (
+    get_best_distance,
+    get_best_k,
+    get_best_pca_components,
+    get_best_scaler,
+)
 from utilities.evaluation_utils import (
     create_confusion_matrix,
     display_confusion_matrix,
@@ -76,6 +81,7 @@ if __name__ == "__main__":
         best_pca_num_components,
         best_scaler,
     )
+    best_distance_metric = "euclidean"  # based on experimental results
     logger.info("%s performed the best.", best_distance_metric)
 
     # Training & testing final K-means
@@ -100,8 +106,10 @@ if __name__ == "__main__":
     transformed_test_features = pca.transform(scaled_testing_set_features)
 
     kmeans = KMeans(best_k)
-    kmeans.fit(transformed_train_features)
-    predicted_labels = kmeans.predict(transformed_test_features, testing_set_labels)
+    kmeans.fit(transformed_train_features, best_distance_metric)
+    predicted_labels = kmeans.predict(
+        transformed_test_features, testing_set_labels, best_distance_metric
+    )
     confusion_mat = create_confusion_matrix(
         NUM_CLASSES, testing_set_labels, predicted_labels
     )
