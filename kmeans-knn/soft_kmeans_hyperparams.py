@@ -1,12 +1,12 @@
 """
-Selecting the best hyperparameters for K-means based on
+Selecting the best hyperparameters for Soft K-means based on
 the average accuracy over multiple iterations.
 """
 import logging
 
 import numpy as np
 
-from kmeans import KMeans
+from soft_kmeans import SoftKMeans
 from utilities.evaluation_utils import (
     create_confusion_matrix,
     eval_metrics_from_confusion_matrix,
@@ -72,10 +72,10 @@ def get_best_scaler(
         transformed_train_features = pca.transform(scaled_training_set_features)
         transformed_valid_features = pca.transform(scaled_validation_set_features)
 
-        # Train Kmeans
-        kmeans = KMeans(k_components)
-        kmeans.fit(transformed_train_features)
-        predicted_labels = kmeans.predict(
+        # Train SoftKMeans
+        soft_kmeans = SoftKMeans(k_components)
+        soft_kmeans.fit(transformed_train_features)
+        predicted_labels = soft_kmeans.predict(
             transformed_valid_features, shuffled_validation_set_labels
         )
 
@@ -115,10 +115,10 @@ def get_best_scaler(
         transformed_train_features = pca.transform(scaled_training_set_features)
         transformed_valid_features = pca.transform(scaled_validation_set_features)
 
-        # Train Kmeans
-        kmeans = KMeans(k_components)
-        kmeans.fit(transformed_train_features)
-        predicted_labels = kmeans.predict(
+        # Train SoftKMeans
+        soft_kmeans = SoftKMeans(k_components)
+        soft_kmeans.fit(transformed_train_features)
+        predicted_labels = soft_kmeans.predict(
             transformed_valid_features, shuffled_validation_set_labels
         )
 
@@ -189,10 +189,10 @@ def get_best_k(
             transformed_train_features = pca.transform(scaled_training_set_features)
             transformed_valid_features = pca.transform(scaled_validation_set_features)
 
-            # Train Kmeans
-            kmeans = KMeans(k)
-            kmeans.fit(transformed_train_features)
-            predicted_labels = kmeans.predict(
+            # Train SoftKMeans
+            soft_kmeans = SoftKMeans(k)
+            soft_kmeans.fit(transformed_train_features)
+            predicted_labels = soft_kmeans.predict(
                 transformed_valid_features, shuffled_validation_set_labels
             )
 
@@ -262,10 +262,10 @@ def get_best_pca_components(
             transformed_train_features = pca.transform(shuffled_training_set_features)
             transformed_valid_features = pca.transform(shuffled_validation_set_features)
 
-            # Train Kmeans
-            kmeans = KMeans(k_components)
-            kmeans.fit(transformed_train_features)
-            predicted_labels = kmeans.predict(
+            # Train SoftKMeans
+            soft_kmeans = SoftKMeans(k_components)
+            soft_kmeans.fit(transformed_train_features)
+            predicted_labels = soft_kmeans.predict(
                 transformed_valid_features, shuffled_validation_set_labels
             )
 
@@ -285,93 +285,3 @@ def get_best_pca_components(
             best_pca_ncomponents = n_components
 
     return best_pca_ncomponents
-
-
-def get_best_distance(
-    training_set_features: np.ndarray,
-    validation_set_features: np.ndarray,
-    validation_set_labels: np.ndarray,
-    num_classes: int,
-    k_components: int,
-    pca_num_components: int,
-    scaler: str,
-):
-    """
-    Selects the best distance metric ('euclidean' or 'cosine') based on the
-    average accuracy over multiple iterations.
-
-    Args:
-        training_set_features (np.ndarray): Features of the training set.
-        validation_set_features (np.ndarray): Features of the validation set.
-        validation_set_labels (np.ndarray): Labels of the validation set.
-        num_classes (int): Number of classes in the classification task.
-        k_components (int): Number of components for K-means.
-        pca_num_components (int): The number of components for PCA.
-        scaler (str): The selected scaler ('StandardScaler' or 'GrayscaleScaler').
-
-    Returns:
-        str: The name of the selected distance metric ('euclidean' or 'cosine').
-    """
-    avg_accuracies = {}
-    num_iterations = 10
-    training_indices = np.arange(training_set_features.shape[0])
-    validation_indices = np.arange(validation_set_features.shape[0])
-
-    for distance in ["euclidean", "cosine"]:
-        total_accuracy = 0
-        for _ in range(num_iterations):
-            # Shuffle Data
-            np.random.shuffle(training_indices)
-            np.random.shuffle(validation_indices)
-            shuffled_training_set_features = training_set_features[training_indices]
-            shuffled_validation_set_features = validation_set_features[
-                validation_indices
-            ]
-            shuffled_validation_set_labels = validation_set_labels[validation_indices]
-
-            # Scale Data
-            if scaler == "GrayscaleScaler":
-                scaler_obj = GrayscaleScaler()
-                scaled_training_set_features = scaler_obj.fit_transform(
-                    shuffled_training_set_features
-                )
-                scaled_validation_set_features = scaler_obj.fit_transform(
-                    shuffled_validation_set_features
-                )
-            elif scaler == "StandardScaler":
-                scaler_obj = StandardScaler()
-                scaler_obj.fit(shuffled_training_set_features)
-                scaled_training_set_features = scaler_obj.transform(
-                    shuffled_training_set_features
-                )
-                scaled_validation_set_features = scaler_obj.transform(
-                    shuffled_validation_set_features
-                )
-
-            # Fit PCA
-            pca = PCA(pca_num_components)
-            pca.fit(scaled_training_set_features)
-            transformed_train_features = pca.transform(scaled_training_set_features)
-            transformed_valid_features = pca.transform(scaled_validation_set_features)
-
-            # Train Kmeans
-            kmeans = KMeans(k_components)
-            kmeans.fit(transformed_train_features, distance)
-            predicted_labels = kmeans.predict(
-                transformed_valid_features, shuffled_validation_set_labels, distance
-            )
-
-            # Evaluate
-            confusion_mat = create_confusion_matrix(
-                num_classes, shuffled_validation_set_labels, predicted_labels
-            )
-            eval_metrics = eval_metrics_from_confusion_matrix(confusion_mat)
-            total_accuracy += eval_metrics["overall"]["accuracy"]
-        avg_accuracies[distance] = total_accuracy / num_iterations
-
-        logger.info(
-            "Average Accuracy for distance %s is %.3f",
-            distance,
-            avg_accuracies[distance],
-        )
-    return max(avg_accuracies, key=lambda key: avg_accuracies[key])

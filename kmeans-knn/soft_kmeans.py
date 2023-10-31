@@ -93,10 +93,6 @@ class SoftKMeans:
             self.centroids, previous_centroids, rtol=rtol_threshold, atol=atol_threshold
         )
         max_iterations = n_iterations <= 0
-        if max_iterations:
-            logger.info("Max iterations has reached.")
-        if no_centroids_change:
-            logger.info("No more change in centroids.")
         return no_centroids_change or max_iterations
 
     def _update_softmax_probabilities(self, features: np.ndarray) -> np.ndarray:
