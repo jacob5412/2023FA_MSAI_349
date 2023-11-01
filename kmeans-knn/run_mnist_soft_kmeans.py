@@ -50,8 +50,8 @@ if __name__ == "__main__":
 
     if not args.tuning:
         # Updating with empirical data
-        best_k = 14
-        best_pca_num_components = 450
+        best_k = 15
+        best_pca_num_components = 650
         best_scaler = "GrayScaler"
         sharpness = 1
     else:
