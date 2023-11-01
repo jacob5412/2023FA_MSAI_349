@@ -388,9 +388,7 @@ def get_best_distance(
             # Train KNNs
             knns = KNearestNeighbor(k_components)
             knns.fit(transformed_train_features, shuffled_training_set_labels)
-            predicted_labels = knns.predict(
-                transformed_valid_features, distance
-            )
+            predicted_labels = knns.predict(transformed_valid_features, distance)
 
             # Evaluate
             confusion_mat = create_confusion_matrix(

@@ -113,9 +113,7 @@ if __name__ == "__main__":
 
     knns = KNearestNeighbor(best_k)
     knns.fit(transformed_train_features, training_set_labels)
-    predicted_labels = knns.predict(
-        transformed_test_features, best_distance_metric
-    )
+    predicted_labels = knns.predict(transformed_test_features, best_distance_metric)
     confusion_mat = create_confusion_matrix(
         NUM_CLASSES, testing_set_labels, predicted_labels
     )
