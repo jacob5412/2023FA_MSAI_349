@@ -88,7 +88,7 @@ def get_best_scaler(
     avg_accuracies["StandardScaler"] = total_accuracy / num_iterations
 
     logger.info(
-        "Average Accuracy for StandardScaler is %.3f", avg_accuracies["StandardScaler"]
+        "Accuracy for StandardScaler is %.3f", avg_accuracies["StandardScaler"]
     )
 
     pca = PCA(pca_num_components)
@@ -131,7 +131,7 @@ def get_best_scaler(
     avg_accuracies["GrayscaleScaler"] = total_accuracy / num_iterations
 
     logger.info(
-        "Average Accuracy for GrayscaleScaler is %.3f",
+        "Accuracy for GrayscaleScaler is %.3f",
         avg_accuracies["GrayscaleScaler"],
     )
 
@@ -205,7 +205,7 @@ def get_best_k(
         avg_accuracies[k] = total_accuracy / num_iterations
 
         logger.info(
-            "Average Accuracy for k-%d is %.3f",
+            "Accuracy for k-%d is %.3f",
             k,
             avg_accuracies[k],
         )
@@ -278,7 +278,7 @@ def get_best_pca_components(
 
         average_accuracy = total_accuracy / num_iterations
         logger.info(
-            "Average Accuracy for %d components is %.3f", n_components, average_accuracy
+            "Accuracy for %d components is %.3f", n_components, average_accuracy
         )
         if average_accuracy > best_accuracy:
             best_accuracy = average_accuracy

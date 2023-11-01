@@ -10,8 +10,10 @@ class PCA:
 
     https://www.askpython.com/python/examples/principal-component-analysis
 
-    Args:
+    Attributes:
         num_components (int): The number of principal components to retain.
+        components (np.ndarray): The retained principal components.
+        mean (np.ndarray): The mean of the input data used for centering.
     """
 
     def __init__(self, num_components) -> None:

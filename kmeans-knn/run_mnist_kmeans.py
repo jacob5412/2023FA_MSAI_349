@@ -46,11 +46,11 @@ if __name__ == "__main__":
         validation_set_features,
         validation_set_labels,
         NUM_CLASSES,
-        [500, 550, 600, 650, 700, 750],
+        [None, 500, 550, 600, 650, 700, 750],
         K_COMPONENTS,
     )
-    best_pca_num_components = 750  # based on empirical evidence
-    logger.info("PCA with %d components performed the best.", best_pca_num_components)
+    best_pca_num_components = 700  # based on empirical evidence
+    logger.info("PCA with %s components performed the best.", best_pca_num_components)
     best_scaler = get_best_scaler(
         training_set_features,
         validation_set_features,

@@ -87,9 +87,7 @@ def get_best_scaler(
         total_accuracy += eval_metrics["overall"]["accuracy"]
     avg_accuracies["StandardScaler"] = total_accuracy / num_iterations
 
-    logger.info(
-        "Average Accuracy for StandardScaler is %.3f", avg_accuracies["StandardScaler"]
-    )
+    logger.info("Accuracy for StandardScaler is %.3f", avg_accuracies["StandardScaler"])
 
     pca = PCA(pca_num_components)
     total_accuracy = 0
@@ -131,7 +129,7 @@ def get_best_scaler(
     avg_accuracies["GrayscaleScaler"] = total_accuracy / num_iterations
 
     logger.info(
-        "Average Accuracy for GrayscaleScaler is %.3f",
+        "Accuracy for GrayscaleScaler is %.3f",
         avg_accuracies["GrayscaleScaler"],
     )
 
@@ -184,10 +182,16 @@ def get_best_k(
                 )
 
             # Fit PCA
-            pca = PCA(pca_num_components)
-            pca.fit(scaled_training_set_features)
-            transformed_train_features = pca.transform(scaled_training_set_features)
-            transformed_valid_features = pca.transform(scaled_validation_set_features)
+            if pca_num_components is None:
+                transformed_train_features = shuffled_training_set_features
+                transformed_valid_features = shuffled_validation_set_features
+            else:
+                pca = PCA(pca_num_components)
+                pca.fit(scaled_training_set_features)
+                transformed_train_features = pca.transform(scaled_training_set_features)
+                transformed_valid_features = pca.transform(
+                    scaled_validation_set_features
+                )
 
             # Train Kmeans
             kmeans = KMeans(k)
@@ -205,7 +209,7 @@ def get_best_k(
         avg_accuracies[k] = total_accuracy / num_iterations
 
         logger.info(
-            "Average Accuracy for k-%d is %.3f",
+            "Accuracy for k-%d is %.3f",
             k,
             avg_accuracies[k],
         )
@@ -258,9 +262,17 @@ def get_best_pca_components(
             shuffled_validation_set_labels = validation_set_labels[validation_indices]
 
             # Fit PCA
-            pca.fit(shuffled_training_set_features)
-            transformed_train_features = pca.transform(shuffled_training_set_features)
-            transformed_valid_features = pca.transform(shuffled_validation_set_features)
+            if n_components is None:
+                transformed_train_features = shuffled_training_set_features
+                transformed_valid_features = shuffled_validation_set_features
+            else:
+                pca.fit(shuffled_training_set_features)
+                transformed_train_features = pca.transform(
+                    shuffled_training_set_features
+                )
+                transformed_valid_features = pca.transform(
+                    shuffled_validation_set_features
+                )
 
             # Train Kmeans
             kmeans = KMeans(k_components)
@@ -278,7 +290,9 @@ def get_best_pca_components(
 
         average_accuracy = total_accuracy / num_iterations
         logger.info(
-            "Average Accuracy for %d components is %.3f", n_components, average_accuracy
+            "Accuracy for %s components is %.3f",
+            n_components,
+            average_accuracy,
         )
         if average_accuracy > best_accuracy:
             best_accuracy = average_accuracy
@@ -349,10 +363,16 @@ def get_best_distance(
                 )
 
             # Fit PCA
-            pca = PCA(pca_num_components)
-            pca.fit(scaled_training_set_features)
-            transformed_train_features = pca.transform(scaled_training_set_features)
-            transformed_valid_features = pca.transform(scaled_validation_set_features)
+            if pca_num_components is None:
+                transformed_train_features = shuffled_training_set_features
+                transformed_valid_features = shuffled_validation_set_features
+            else:
+                pca = PCA(pca_num_components)
+                pca.fit(scaled_training_set_features)
+                transformed_train_features = pca.transform(scaled_training_set_features)
+                transformed_valid_features = pca.transform(
+                    scaled_validation_set_features
+                )
 
             # Train Kmeans
             kmeans = KMeans(k_components)
@@ -370,7 +390,7 @@ def get_best_distance(
         avg_accuracies[distance] = total_accuracy / num_iterations
 
         logger.info(
-            "Average Accuracy for distance %s is %.3f",
+            "Accuracy for distance %s is %.3f",
             distance,
             avg_accuracies[distance],
         )
