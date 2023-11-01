@@ -1,12 +1,12 @@
 """
-Run K-means algorithm
+Run KNNs algorithm
 """
 import logging
 
 import numpy as np
 
-from kmeans import KMeans
-from kmeans_hyperparams import (
+from k_nearest_neighbor import KNearestNeighbor
+from knns_hyperparams import (
     get_best_distance,
     get_best_k,
     get_best_pca_components,
@@ -23,7 +23,7 @@ from utilities.preprocessing_utils import GrayscaleScaler, StandardScaler
 from utilities.read_data import get_numerical_features, get_numerical_labels, read_data
 
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("kmeans-training")
+logger = logging.getLogger("knns-training")
 
 
 if __name__ == "__main__":
@@ -38,42 +38,46 @@ if __name__ == "__main__":
     testing_set_features = np.array(get_numerical_features(testing_set))
 
     NUM_CLASSES = 10
-    K_COMPONENTS = 11
+    K_NEIGHBORS = 4
 
     # Hyperparameter-Tuning
     best_pca_num_components = get_best_pca_components(
         training_set_features,
+        training_set_labels,
         validation_set_features,
         validation_set_labels,
         NUM_CLASSES,
         [None, 500, 550, 600, 650, 700, 750],
-        K_COMPONENTS,
+        K_NEIGHBORS,
     )
     best_pca_num_components = 700  # based on empirical evidence
     logger.info("PCA with %s components performed the best.", best_pca_num_components)
     best_scaler = get_best_scaler(
         training_set_features,
+        training_set_labels,
         validation_set_features,
         validation_set_labels,
         NUM_CLASSES,
-        K_COMPONENTS,
+        K_NEIGHBORS,
         best_pca_num_components,  # passing best param
     )
     best_scaler = "GrayscaleScaler"  # based on empirical evidence
     logger.info("%s performed the best.", best_scaler)
     best_k = get_best_k(
         training_set_features,
+        training_set_labels,
         validation_set_features,
         validation_set_labels,
         NUM_CLASSES,
-        [10, 11, 12, 13, 14, 15],
+        [3, 4, 5, 6, 7],
         best_pca_num_components,  # passing best param
         best_scaler,  # passing best param
     )
-    best_k = 14  # based on empirical evidence
+    best_k = 4  # based on empirical evidence
     logger.info("%d performed the best.", best_k)
     best_distance_metric = get_best_distance(
         training_set_features,
+        training_set_labels,
         validation_set_features,
         validation_set_labels,
         NUM_CLASSES,
@@ -108,11 +112,9 @@ if __name__ == "__main__":
         transformed_train_features = pca.transform(scaled_training_set_features)
         transformed_test_features = pca.transform(scaled_testing_set_features)
 
-    kmeans = KMeans(best_k)
-    kmeans.fit(transformed_train_features, best_distance_metric)
-    predicted_labels = kmeans.predict(
-        transformed_test_features, testing_set_labels, best_distance_metric
-    )
+    knns = KNearestNeighbor(best_k)
+    knns.fit(transformed_train_features, training_set_labels)
+    predicted_labels = knns.predict(transformed_test_features, best_distance_metric)
     confusion_mat = create_confusion_matrix(
         NUM_CLASSES, testing_set_labels, predicted_labels
     )

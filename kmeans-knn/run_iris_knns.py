@@ -2,6 +2,7 @@
 Testing KNN on the Iris Dataset
 """
 import numpy as np
+
 from k_nearest_neighbor import KNearestNeighbor
 from utilities.evaluation_utils import (
     create_confusion_matrix,

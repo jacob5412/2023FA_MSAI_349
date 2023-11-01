@@ -38,4 +38,6 @@ jobs:
           python3 run_iris_soft_kmeans.py
           python3 run_iris_knns.py
           python3 run_mnist_kmeans.py
+          python3 run_mnist_soft_kmeans.py
+          python3 run_mnist_knns.py
         working-directory: ./kmeans-knn
