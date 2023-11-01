@@ -4,7 +4,6 @@ Run Soft K-means algorithm
 import logging
 
 import numpy as np
-
 from soft_kmeans import SoftKMeans
 from soft_kmeans_hyperparams import get_best_k, get_best_pca_components, get_best_scaler
 from utilities.evaluation_utils import (
@@ -36,35 +35,35 @@ if __name__ == "__main__":
     K_COMPONENTS = 11
 
     # Hyperparameter-Tuning
-    # best_pca_num_components = get_best_pca_components(
-    #     training_set_features,
-    #     validation_set_features,
-    #     validation_set_labels,
-    #     NUM_CLASSES,
-    #     [None, 500, 550, 600, 650, 700, 750],
-    #     K_COMPONENTS,
-    # )
+    best_pca_num_components = get_best_pca_components(
+        training_set_features,
+        validation_set_features,
+        validation_set_labels,
+        NUM_CLASSES,
+        [None, 500, 550, 600, 650, 700, 750],
+        K_COMPONENTS,
+    )
     best_pca_num_components = 750  # based on empirical evidence
     logger.info("PCA with %s components performed the best.", best_pca_num_components)
-    # best_scaler = get_best_scaler(
-    #     training_set_features,
-    #     validation_set_features,
-    #     validation_set_labels,
-    #     NUM_CLASSES,
-    #     K_COMPONENTS,
-    #     best_pca_num_components,  # passing best param
-    # )
+    best_scaler = get_best_scaler(
+        training_set_features,
+        validation_set_features,
+        validation_set_labels,
+        NUM_CLASSES,
+        K_COMPONENTS,
+        best_pca_num_components,  # passing best param
+    )
     best_scaler = "GrayscaleScaler"  # based on empirical evidence
     logger.info("%s performed the best.", best_scaler)
-    # best_k = get_best_k(
-    #     training_set_features,
-    #     validation_set_features,
-    #     validation_set_labels,
-    #     NUM_CLASSES,
-    #     [10, 11, 12, 13, 14, 15],
-    #     best_pca_num_components,  # passing best param
-    #     best_scaler,  # passing best param
-    # )
+    best_k = get_best_k(
+        training_set_features,
+        validation_set_features,
+        validation_set_labels,
+        NUM_CLASSES,
+        [10, 11, 12, 13, 14, 15],
+        best_pca_num_components,  # passing best param
+        best_scaler,  # passing best param
+    )
     best_k = 14  # based on empirical evidence
     logger.info("%d performed the best.", best_k)
 
