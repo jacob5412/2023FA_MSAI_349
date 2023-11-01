@@ -1,17 +1,13 @@
 """
 Run K-means algorithm
 """
+import argparse
 import logging
 
 import numpy as np
 
 from kmeans import KMeans
-from kmeans_hyperparams import (
-    get_best_distance,
-    get_best_k,
-    get_best_pca_components,
-    get_best_scaler,
-)
+from kmeans_hyperparams import get_best_hyperparams
 from utilities.evaluation_utils import (
     create_confusion_matrix,
     display_confusion_matrix,
@@ -27,6 +23,17 @@ logger = logging.getLogger("kmeans-training")
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Run MNIST on Kmeans.")
+    parser.add_argument(
+        "--no-tuning",
+        dest="tuning",
+        action="store_false",
+        help="Set to False to disable hyperparameter tuning",
+    )
+    args = parser.parse_args()
+
+    hyperparams_filepath = "hyperparams_files/kmeans_hyperparams.csv"
+    hyperparams_results_filepath = "hyperparams_files/kmeans_hyperparams_results.csv"
     training_set = read_data("mnist_dataset/train.csv")
     training_set_labels = np.array(get_numerical_labels(training_set))
     training_set_features = np.array(get_numerical_features(training_set))
@@ -38,51 +45,33 @@ if __name__ == "__main__":
     testing_set_features = np.array(get_numerical_features(testing_set))
 
     NUM_CLASSES = 10
-    K_COMPONENTS = 11
 
-    # Hyperparameter-Tuning
-    best_pca_num_components = get_best_pca_components(
-        training_set_features,
-        validation_set_features,
-        validation_set_labels,
-        NUM_CLASSES,
-        [None, 500, 550, 600, 650, 700, 750],
-        K_COMPONENTS,
-    )
-    best_pca_num_components = 700  # based on empirical evidence
-    logger.info("PCA with %s components performed the best.", best_pca_num_components)
-    best_scaler = get_best_scaler(
-        training_set_features,
-        validation_set_features,
-        validation_set_labels,
-        NUM_CLASSES,
-        K_COMPONENTS,
-        best_pca_num_components,  # passing best param
-    )
-    best_scaler = "GrayscaleScaler"  # based on empirical evidence
-    logger.info("%s performed the best.", best_scaler)
-    best_k = get_best_k(
-        training_set_features,
-        validation_set_features,
-        validation_set_labels,
-        NUM_CLASSES,
-        [10, 11, 12, 13, 14, 15],
-        best_pca_num_components,  # passing best param
-        best_scaler,  # passing best param
-    )
-    best_k = 14  # based on empirical evidence
-    logger.info("%d performed the best.", best_k)
-    best_distance_metric = get_best_distance(
-        training_set_features,
-        validation_set_features,
-        validation_set_labels,
-        NUM_CLASSES,
-        best_k,  # passing best param
-        best_pca_num_components,  # passing best param
-        best_scaler,  # passing best param
-    )
-    best_distance_metric = "cosine"  # based on empirical evidence
-    logger.info("%s performed the best.", best_distance_metric)
+    if not args.tuning:
+        # Updating with empirical data
+        best_k = 15
+        best_pca_num_components = 550
+        best_scaler = "GrayScaler"
+        best_distance_metric = "cosine"
+    else:
+        # Hyperparameter-Tuning
+        best_hyperparams = get_best_hyperparams(
+            training_set_features,
+            validation_set_features,
+            validation_set_labels,
+            NUM_CLASSES,
+            hyperparams_filepath,
+            hyperparams_results_filepath,
+        )
+
+        best_k = best_hyperparams[0]
+        best_pca_num_components = best_hyperparams[1]
+        best_scaler = best_hyperparams[2]
+        best_distance_metric = best_hyperparams[3]
+
+        logger.info(
+            "Best hyperparams are %s",
+            best_hyperparams,
+        )
 
     # Training & testing final K-means
     if best_scaler == "GrayscaleScaler":
@@ -98,6 +87,9 @@ if __name__ == "__main__":
         standard_scaler.fit(training_set_features)
         scaled_training_set_features = standard_scaler.transform(training_set_features)
         scaled_testing_set_features = standard_scaler.transform(testing_set_features)
+    else:
+        scaled_training_set_features = training_set_features
+        scaled_testing_set_features = testing_set_features
 
     if best_pca_num_components is None:
         transformed_train_features = scaled_training_set_features
