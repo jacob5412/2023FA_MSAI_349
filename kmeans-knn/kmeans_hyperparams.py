@@ -68,9 +68,13 @@ def get_best_scaler(
         )
 
         # Fit PCA
-        pca.fit(scaled_training_set_features)
-        transformed_train_features = pca.transform(scaled_training_set_features)
-        transformed_valid_features = pca.transform(scaled_validation_set_features)
+        if pca_num_components is None:
+            transformed_train_features = shuffled_training_set_features
+            transformed_valid_features = shuffled_validation_set_features
+        else:
+            pca.fit(scaled_training_set_features)
+            transformed_train_features = pca.transform(scaled_training_set_features)
+            transformed_valid_features = pca.transform(scaled_validation_set_features)
 
         # Train Kmeans
         kmeans = KMeans(k_components)
@@ -109,9 +113,13 @@ def get_best_scaler(
         )
 
         # Fit PCA
-        pca.fit(scaled_training_set_features)
-        transformed_train_features = pca.transform(scaled_training_set_features)
-        transformed_valid_features = pca.transform(scaled_validation_set_features)
+        if pca_num_components is None:
+            transformed_train_features = shuffled_training_set_features
+            transformed_valid_features = shuffled_validation_set_features
+        else:
+            pca.fit(scaled_training_set_features)
+            transformed_train_features = pca.transform(scaled_training_set_features)
+            transformed_valid_features = pca.transform(scaled_validation_set_features)
 
         # Train Kmeans
         kmeans = KMeans(k_components)
