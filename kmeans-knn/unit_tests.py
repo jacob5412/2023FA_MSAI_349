@@ -7,6 +7,7 @@ from random import randint
 import numpy as np
 from sklearn.decomposition import PCA as sklearn_PCA
 from sklearn.metrics import pairwise
+
 from utilities.distance_utils import cosine_distance, euclidean_distance
 from utilities.pca_utils import PCA
 

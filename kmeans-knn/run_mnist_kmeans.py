@@ -4,6 +4,7 @@ Run K-means algorithm
 import logging
 
 import numpy as np
+
 from kmeans import KMeans
 from kmeans_hyperparams import (
     get_best_distance,

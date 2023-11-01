@@ -5,6 +5,7 @@ the average accuracy over multiple iterations.
 import logging
 
 import numpy as np
+
 from k_nearest_neighbor import KNearestNeighbor
 from utilities.evaluation_utils import (
     create_confusion_matrix,
@@ -23,7 +24,7 @@ def get_best_scaler(
     validation_set_features: np.ndarray,
     validation_set_labels: np.ndarray,
     num_classes: int,
-    k_components: int,
+    k_neighbors: int,
     pca_num_components: int,
 ) -> str:
     """
@@ -36,7 +37,7 @@ def get_best_scaler(
         validation_set_features (np.ndarray): Features of the validation set.
         validation_set_labels (np.ndarray): Labels of the validation set.
         num_classes (int): Number of classes in the classification task.
-        k_components: number of k for K-means.
+        k_neighbors: number of k for K-means.
         pca_num_components (int): The number of components for PCA.
 
     Returns:
@@ -79,7 +80,7 @@ def get_best_scaler(
             transformed_valid_features = pca.transform(scaled_validation_set_features)
 
         # Train KNNs
-        knns = KNearestNeighbor(k_components)
+        knns = KNearestNeighbor(k_neighbors)
         knns.fit(transformed_train_features, shuffled_training_set_labels)
         predicted_labels = knns.predict(transformed_valid_features)
 
@@ -123,7 +124,7 @@ def get_best_scaler(
             transformed_valid_features = pca.transform(scaled_validation_set_features)
 
         # Train KNNs
-        knns = KNearestNeighbor(k_components)
+        knns = KNearestNeighbor(k_neighbors)
         knns.fit(transformed_train_features, shuffled_training_set_labels)
         predicted_labels = knns.predict(transformed_valid_features)
 
@@ -230,7 +231,7 @@ def get_best_pca_components(
     validation_set_labels: np.ndarray,
     num_classes: int,
     n_components_list: list,
-    k_components: int,
+    k_neighbors: int,
 ) -> int:
     """
     Selects the best number of PCA components from a list of possible
@@ -244,7 +245,7 @@ def get_best_pca_components(
         num_classes (int): Number of classes in the classification task.
         n_components_list (list): A list of possible PCA component values to
         consider.
-        k_components: number of k for KNNs.
+        k_neighbors: number of k for KNNs.
 
     Returns:
         int: The optimal number of PCA components for the given classification
@@ -285,7 +286,7 @@ def get_best_pca_components(
                 )
 
             # Train KNNs
-            knns = KNearestNeighbor(k_components)
+            knns = KNearestNeighbor(k_neighbors)
             knns.fit(transformed_train_features, shuffled_training_set_labels)
             predicted_labels = knns.predict(transformed_valid_features)
 
@@ -315,7 +316,7 @@ def get_best_distance(
     validation_set_features: np.ndarray,
     validation_set_labels: np.ndarray,
     num_classes: int,
-    k_components: int,
+    k_neighbors: int,
     pca_num_components: int,
     scaler: str,
 ):
@@ -329,7 +330,7 @@ def get_best_distance(
         validation_set_features (np.ndarray): Features of the validation set.
         validation_set_labels (np.ndarray): Labels of the validation set.
         num_classes (int): Number of classes in the classification task.
-        k_components (int): Number of components for K-means.
+        k_neighbors (int): Number of components for K-means.
         pca_num_components (int): The number of components for PCA.
         scaler (str): The selected scaler ('StandardScaler' or 'GrayscaleScaler').
 
@@ -386,9 +387,9 @@ def get_best_distance(
                 )
 
             # Train KNNs
-            knns = KNearestNeighbor(k_components)
+            knns = KNearestNeighbor(k_neighbors)
             knns.fit(transformed_train_features, shuffled_training_set_labels)
-            predicted_labels = knns.predict(transformed_valid_features, distance)
+            predicted_labels = knns.predict(transformed_valid_features, False, distance)
 
             # Evaluate
             confusion_mat = create_confusion_matrix(

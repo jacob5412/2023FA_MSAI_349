@@ -2,6 +2,7 @@
 K-means
 """
 import numpy as np
+
 from utilities import distance_utils
 
 

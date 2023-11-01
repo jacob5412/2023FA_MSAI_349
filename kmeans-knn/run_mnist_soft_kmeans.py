@@ -4,6 +4,7 @@ Run Soft K-means algorithm
 import logging
 
 import numpy as np
+
 from soft_kmeans import SoftKMeans
 from soft_kmeans_hyperparams import get_best_k, get_best_pca_components, get_best_scaler
 from utilities.evaluation_utils import (

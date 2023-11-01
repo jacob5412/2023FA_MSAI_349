@@ -1,9 +1,10 @@
 """
-Run K-means algorithm
+Run KNNs algorithm
 """
 import logging
 
 import numpy as np
+
 from k_nearest_neighbor import KNearestNeighbor
 from knns_hyperparams import (
     get_best_distance,
@@ -37,7 +38,7 @@ if __name__ == "__main__":
     testing_set_features = np.array(get_numerical_features(testing_set))
 
     NUM_CLASSES = 10
-    K_COMPONENTS = 11
+    K_NEIGHBORS = 4
 
     # Hyperparameter-Tuning
     best_pca_num_components = get_best_pca_components(
@@ -47,7 +48,7 @@ if __name__ == "__main__":
         validation_set_labels,
         NUM_CLASSES,
         [None, 500, 550, 600, 650, 700, 750],
-        K_COMPONENTS,
+        K_NEIGHBORS,
     )
     best_pca_num_components = 700  # based on empirical evidence
     logger.info("PCA with %s components performed the best.", best_pca_num_components)
@@ -57,7 +58,7 @@ if __name__ == "__main__":
         validation_set_features,
         validation_set_labels,
         NUM_CLASSES,
-        K_COMPONENTS,
+        K_NEIGHBORS,
         best_pca_num_components,  # passing best param
     )
     best_scaler = "GrayscaleScaler"  # based on empirical evidence
@@ -68,11 +69,11 @@ if __name__ == "__main__":
         validation_set_features,
         validation_set_labels,
         NUM_CLASSES,
-        [10, 11, 12, 13, 14, 15],
+        [3, 4, 5, 6, 7],
         best_pca_num_components,  # passing best param
         best_scaler,  # passing best param
     )
-    best_k = 14  # based on empirical evidence
+    best_k = 4  # based on empirical evidence
     logger.info("%d performed the best.", best_k)
     best_distance_metric = get_best_distance(
         training_set_features,

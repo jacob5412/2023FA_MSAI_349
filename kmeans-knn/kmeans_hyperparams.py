@@ -5,6 +5,7 @@ the average accuracy over multiple iterations.
 import logging
 
 import numpy as np
+
 from kmeans import KMeans
 from utilities.evaluation_utils import (
     create_confusion_matrix,
