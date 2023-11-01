@@ -4,7 +4,6 @@ Testing Soft K-means on the Iris Dataset
 import logging
 
 import numpy as np
-
 from soft_kmeans import SoftKMeans
 from utilities.evaluation_utils import (
     create_confusion_matrix,

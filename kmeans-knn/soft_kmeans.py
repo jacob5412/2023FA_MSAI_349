@@ -174,8 +174,9 @@ class SoftKMeans:
             cluster_mask = cluster_assignments == cluster_id
             if np.sum(cluster_mask) > 0:
                 true_labels = labels[cluster_mask]
-                votes = np.bincount(true_labels)
+                cluster_softmax_probs = softmax_probabilities[cluster_mask, cluster_id]
+                weighted_votes = np.bincount(true_labels, weights=cluster_softmax_probs)
                 # find the most common label
-                majority_label = np.argmax(votes)
+                majority_label = np.argmax(weighted_votes)
                 predicted_labels[cluster_mask] = majority_label
         return predicted_labels

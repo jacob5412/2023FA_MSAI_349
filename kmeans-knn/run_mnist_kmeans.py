@@ -4,7 +4,6 @@ Run K-means algorithm
 import logging
 
 import numpy as np
-
 from kmeans import KMeans
 from kmeans_hyperparams import (
     get_best_distance,
@@ -46,11 +45,11 @@ if __name__ == "__main__":
         validation_set_features,
         validation_set_labels,
         NUM_CLASSES,
-        [500, 550, 600, 650, 700, 750],
+        [None, 500, 550, 600, 650, 700, 750],
         K_COMPONENTS,
     )
-    best_pca_num_components = 750  # based on empirical evidence
-    logger.info("PCA with %d components performed the best.", best_pca_num_components)
+    best_pca_num_components = 700  # based on empirical evidence
+    logger.info("PCA with %s components performed the best.", best_pca_num_components)
     best_scaler = get_best_scaler(
         training_set_features,
         validation_set_features,
@@ -70,7 +69,7 @@ if __name__ == "__main__":
         best_pca_num_components,  # passing best param
         best_scaler,  # passing best param
     )
-    best_k = 13  # based on empirical evidence
+    best_k = 14  # based on empirical evidence
     logger.info("%d performed the best.", best_k)
     best_distance_metric = get_best_distance(
         training_set_features,
@@ -81,7 +80,7 @@ if __name__ == "__main__":
         best_pca_num_components,  # passing best param
         best_scaler,  # passing best param
     )
-    best_distance_metric = "euclidean"  # based on empirical evidence
+    best_distance_metric = "cosine"  # based on empirical evidence
     logger.info("%s performed the best.", best_distance_metric)
 
     # Training & testing final K-means
@@ -99,11 +98,14 @@ if __name__ == "__main__":
         scaled_training_set_features = standard_scaler.transform(training_set_features)
         scaled_testing_set_features = standard_scaler.transform(testing_set_features)
 
-    pca = PCA(best_pca_num_components)
-    pca.fit(scaled_training_set_features)
-
-    transformed_train_features = pca.transform(scaled_training_set_features)
-    transformed_test_features = pca.transform(scaled_testing_set_features)
+    if best_pca_num_components is None:
+        transformed_train_features = scaled_training_set_features
+        transformed_test_features = scaled_testing_set_features
+    else:
+        pca = PCA(best_pca_num_components)
+        pca.fit(scaled_training_set_features)
+        transformed_train_features = pca.transform(scaled_training_set_features)
+        transformed_test_features = pca.transform(scaled_testing_set_features)
 
     kmeans = KMeans(best_k)
     kmeans.fit(transformed_train_features, best_distance_metric)
