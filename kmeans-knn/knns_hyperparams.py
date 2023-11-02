@@ -1,5 +1,5 @@
 """
-Selecting the best hyperparameters for K-means based on
+Selecting the best hyperparameters for KNNs based on
 the average accuracy over multiple iterations.
 """
 import csv
