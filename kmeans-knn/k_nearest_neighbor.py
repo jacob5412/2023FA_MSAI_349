@@ -16,14 +16,11 @@ class KNearestNeighbor:
         n_neighbors (int): The number of nearest neighbors to consider during
         prediction.
         aggregator (str): The method for aggregating neighbor labels.
-        metric (str): The distance metric used for comparing data points, i.e.,
-        "mode" or "weighted_mode".
     """
 
-    def __init__(self, n_neighbors: int, aggregator="mode", metric="euclidean") -> None:
+    def __init__(self, n_neighbors: int, aggregator="mode") -> None:
         self.n_neighbors = n_neighbors
         self.aggregator = aggregator
-        self.metric = metric
 
     def _get_distances(
         self, train_feature: np.ndarray, test_feature: np.ndarray, metric: str
