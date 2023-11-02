@@ -1,5 +1,5 @@
 """
-Run K-means algorithm
+Run KNNs algorithm
 """
 import argparse
 import logging
