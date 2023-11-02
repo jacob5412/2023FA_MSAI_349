@@ -19,11 +19,11 @@ from utilities.preprocessing_utils import GrayscaleScaler, StandardScaler
 from utilities.read_data import get_numerical_features, get_numerical_labels, read_data
 
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("knns-training")
+logger = logging.getLogger("knns-hyperparameter-training")
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Run MNIST on K-Nearest Neighbors.")
+    parser = argparse.ArgumentParser(description="Run MNIST on KNNs.")
     parser.add_argument(
         "--no-tuning",
         dest="tuning",
