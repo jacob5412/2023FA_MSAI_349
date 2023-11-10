@@ -1,4 +1,4 @@
-from utils.read_data import read_insurability
+from data_loaders.read_data import read_insurability
 
 
 def classify_insurability_manual():
@@ -8,3 +8,7 @@ def classify_insurability_manual():
 
     # reimplement classify_insurability() without using a PyTorch optimizer.
     # this part may be simpler without using a class for the FFNN
+
+
+if __name__ == "__main__":
+    classify_insurability_manual()

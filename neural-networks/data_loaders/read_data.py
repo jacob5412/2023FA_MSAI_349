@@ -1,15 +1,17 @@
+import numpy as np
+
+
 def read_mnist(file_name):
     data_set = []
     with open(file_name, "rt") as f:
         for line in f:
             line = line.replace("\n", "")
             tokens = line.split(",")
-            label = tokens[0]
             attribs = []
-            for i in range(784):
-                attribs.append(tokens[i + 1])
-            data_set.append([label, attribs])
-    return data_set
+            for i in range(785):
+                attribs.append(int(tokens[i]))
+            data_set.append(np.array(attribs))
+    return np.array(data_set)
 
 
 def show_mnist(file_name, mode):

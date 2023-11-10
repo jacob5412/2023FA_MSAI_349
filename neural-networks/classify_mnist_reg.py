@@ -1,4 +1,4 @@
-from utils.read_data import read_mnist
+from data_loaders.read_data import read_mnist
 
 
 def classify_mnist_reg():

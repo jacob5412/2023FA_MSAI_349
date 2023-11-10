@@ -1,4 +1,4 @@
-from utils.read_data import read_insurability
+from data_loaders.read_data import read_insurability
 
 
 def classify_insurability():
