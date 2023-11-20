@@ -16,7 +16,7 @@ from networks.train_network import train_network
 from utils.generate_hyperparams import get_hyperparams_q1
 from utils.plot_evaluation import plot_accuracy_curve, plot_learning_curve
 
-MINIMUM_LEARNING_RATE = 1e-5
+MINIMUM_LEARNING_RATE = 1e-6
 PRINT_INTERVAL = 150
 BASE_PATH = "hyperparams/question_1/"
 
@@ -112,6 +112,7 @@ def hyperparams_search_q1():
                     MINIMUM_LEARNING_RATE,
                 )
                 optimizer.param_groups[0]["lr"] = learning_rate
+                print(f"New LR is: {optimizer.param_groups[0]['lr']:.8f}")
         results.append(
             list(hyperparams) + [train_loss, val_loss, train_accuracy, val_accuracy]
         )

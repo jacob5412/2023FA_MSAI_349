@@ -13,10 +13,9 @@ from networks.insurability_q4 import FeedForward
 from networks.test_network import test_network
 from networks.train_network_no_optimizer import train_network
 from utils.generate_hyperparams import get_hyperparams_q4
-from utils.plot_evaluation import plot_accuracy_curve, plot_learning_curve
+from utils.plot_evaluation_no_optimizer import plot_accuracy_curve, plot_learning_curve
 
-MINIMUM_LEARNING_RATE = 1e-5
-PRINT_INTERVAL = 150
+PRINT_INTERVAL = 250
 BASE_PATH = "hyperparams/question_4/"
 
 
@@ -33,8 +32,6 @@ def save_to_csv(data):
     headers = [
         "num_epochs",
         "learning_rate",
-        "lr_decay_factor",
-        "lr_decay_step",
         "final_train_loss",
         "final_valid_loss",
         "final_train_acc",
@@ -77,7 +74,7 @@ def hyperparams_search_q4():
         train_accuracies = []
         val_losses = []
         val_accuracies = []
-        num_epochs, learning_rate, lr_decay_factor, lr_decay_step = hyperparams
+        num_epochs, learning_rate = hyperparams
         orginal_learning_rate = learning_rate
 
         ff = FeedForward().to(device)
@@ -103,26 +100,19 @@ def hyperparams_search_q4():
                 print(f"Train Accuracy: {train_accuracy:.6f}")
                 print(f"Valid Accuracy: {val_accuracy:.6f}\n")
 
-            # Learning rate decay schedule
-            if (epoch + 1) % lr_decay_step == 0:
-                new_learning_rate = max(
-                    learning_rate * lr_decay_factor,
-                    MINIMUM_LEARNING_RATE,
-                )
-                learning_rate = new_learning_rate
         results.append(
             list(hyperparams) + [train_loss, val_loss, train_accuracy, val_accuracy]
         )
         plot_learning_curve(
             train_losses,
             val_losses,
-            [num_epochs, orginal_learning_rate, lr_decay_factor, lr_decay_step],
+            [num_epochs, orginal_learning_rate],
             BASE_PATH,
         )
         plot_accuracy_curve(
             train_accuracies,
             val_accuracies,
-            [num_epochs, orginal_learning_rate, lr_decay_factor, lr_decay_step],
+            [num_epochs, orginal_learning_rate],
             BASE_PATH,
         )
     save_to_csv(results)

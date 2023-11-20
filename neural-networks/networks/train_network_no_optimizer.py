@@ -1,6 +1,5 @@
 import torch
 
-
 def train_network(dataloader, model, loss_func, device="cpu", learning_rate=0.001):
     model.train()
 
@@ -16,14 +15,14 @@ def train_network(dataloader, model, loss_func, device="cpu", learning_rate=0.00
         pred = model(X)
         loss = loss_func(pred, y)
 
-        # Calculate gradients manually
         model.zero_grad()
         loss.backward()
 
-        # Manual update of weights
+        # Manual update of weights (without bias term)
         with torch.no_grad():
-            for param in model.parameters():
-                param.data -= learning_rate * param.grad
+            for name, param in model.named_parameters():
+                if 'bias' not in name:  # Skip updating bias terms
+                    param.data -= learning_rate * param.grad
 
         # Calculate accuracy
         _, predicted_labels = torch.max(pred, 1)

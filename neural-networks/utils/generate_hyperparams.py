@@ -55,17 +55,13 @@ def get_hyperparams_q3():
 
 
 def get_hyperparams_q4():
-    num_epochs_range = [1000]
-    initial_lr_range = [0.001, 0.005]
-    lr_decay_factor_range = [0.1, 0.2, 1]
-    lr_decay_step_range = [250, 350]
+    num_epochs_range = [1250, 1600, 2000]
+    initial_lr_range = [0.001, 0.005, 0.01]
 
     all_combinations = list(
         itertools.product(
             num_epochs_range,
             initial_lr_range,
-            lr_decay_factor_range,
-            lr_decay_step_range,
         )
     )
     return all_combinations
