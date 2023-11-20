@@ -87,7 +87,7 @@ def hyperparams_search_q3():
             lr_decay_step,
             regularization,
         ) = hyperparams
-        orginal_learning_rate = learning_rate
+        original_learning_rate = learning_rate
 
         loss_func = nn.CrossEntropyLoss()
         if regularization != 0:
@@ -135,7 +135,7 @@ def hyperparams_search_q3():
             val_losses,
             [
                 num_epochs,
-                orginal_learning_rate,
+                original_learning_rate,
                 lr_decay_factor,
                 lr_decay_step,
                 regularization,
@@ -147,7 +147,7 @@ def hyperparams_search_q3():
             val_accuracies,
             [
                 num_epochs,
-                orginal_learning_rate,
+                original_learning_rate,
                 lr_decay_factor,
                 lr_decay_step,
                 regularization,

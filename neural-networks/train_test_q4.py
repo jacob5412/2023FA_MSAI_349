@@ -1,5 +1,5 @@
 """
-Module for training and testing
+Module for training and testing a neural network model on insurability data.
 """
 import torch
 from torch import nn
@@ -23,20 +23,17 @@ BASE_PATH = "results/question_4/"
 
 def train_and_test_q4():
     """
-    Perform hyperparameter search for a neural network model on insurability data.
-
-    Returns:
-    - None
+    Train and test a FeedForward network on insurability data.
     """
-    # load training data
+    # Load training data
     train = read_insurability("three_train.csv")
     train_features = train[:, 1:]
 
-    # scaling data
+    # Scaling data
     ss = StandardScaler()
     ss.fit(train_features)
 
-    # dataset loaders
+    # Dataset loaders
     train_data = CustomInsurabilityDataset("three_train.csv", scaler=ss)
     train_loader = DataLoader(train_data, batch_size=64, shuffle=True)
     valid_data = CustomInsurabilityDataset("three_valid.csv", scaler=ss)
@@ -44,13 +41,12 @@ def train_and_test_q4():
     test_data = CustomInsurabilityDataset("three_test.csv", scaler=ss)
     test_loader = DataLoader(test_data, batch_size=64, shuffle=True)
 
+    # Initialize FeedForward model, loss function, optimizer, and lists to track metrics
     device = "cpu"
     num_epochs = 3800
     learning_rate = 0.005
-
     ff_custom_optimizer = FeedForward().to(device)
     ff_optimizer = FeedForward().to(device)
-
     optimizer = torch.optim.SGD(
         ff_optimizer.parameters(),
         lr=learning_rate,
@@ -65,7 +61,7 @@ def train_and_test_q4():
     val_accuracies = []
 
     for epoch in range(num_epochs):
-        # fetch train and valid losses
+        # Train the network and validate
         (
             train_loss_custom_optimizer,
             train_accuracy_custom_optimizer,
@@ -80,14 +76,13 @@ def train_and_test_q4():
         )
         train_losses_optimizer.append(train_loss_optimizer)
         train_accuracies_optimizer.append(train_accuracy_optimizer)
-
         val_loss, val_accuracy = test_network(
             valid_loader, ff_custom_optimizer, loss_func, device
         )
         val_losses.append(val_loss)
         val_accuracies.append(val_accuracy)
 
-        # print loss
+        # Print Loss
         if (epoch + 1) % PRINT_INTERVAL == 0:
             print(f"---Epoch [{epoch + 1}/{num_epochs}]---")
             print(f"Train Loss (custom Optimizer): {train_loss_custom_optimizer:.6f}")
@@ -99,6 +94,7 @@ def train_and_test_q4():
             print(f"Train Accuracy (Optimizer): {train_accuracy_optimizer:.6f}")
             print(f"Valid Accuracy: {val_accuracy:.6f}\n")
 
+    # Plot learning and accuracy curves
     plot_learning_curve(
         train_losses_custom_optimizer,
         train_losses_optimizer,

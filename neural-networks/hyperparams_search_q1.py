@@ -79,7 +79,7 @@ def hyperparams_search_q1():
         val_losses = []
         val_accuracies = []
         num_epochs, learning_rate, lr_decay_factor, lr_decay_step = hyperparams
-        orginal_learning_rate = learning_rate
+        original_learning_rate = learning_rate
 
         ff = FeedForward().to(device)
         loss_func = nn.CrossEntropyLoss()
@@ -119,13 +119,13 @@ def hyperparams_search_q1():
         plot_learning_curve(
             train_losses,
             val_losses,
-            [num_epochs, orginal_learning_rate, lr_decay_factor, lr_decay_step],
+            [num_epochs, original_learning_rate, lr_decay_factor, lr_decay_step],
             BASE_PATH,
         )
         plot_accuracy_curve(
             train_accuracies,
             val_accuracies,
-            [num_epochs, orginal_learning_rate, lr_decay_factor, lr_decay_step],
+            [num_epochs, original_learning_rate, lr_decay_factor, lr_decay_step],
             BASE_PATH,
         )
     save_to_csv(results)

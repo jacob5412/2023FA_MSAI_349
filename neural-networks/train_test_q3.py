@@ -1,5 +1,5 @@
 """
-Module for hyperparameter search and evaluation.
+Module for training and testing a neural network model on MNIST data.
 """
 import torch
 from torch import nn
@@ -22,20 +22,17 @@ BASE_PATH = "results/question_3/"
 
 def train_test_q3():
     """
-    Perform hyperparameter search for a neural network model on insurability data.
-
-    Returns:
-    - None
+    Perform hyperparameter search for a neural network model on MNIST data.
     """
-    # load training data
+    # Load training data
     train = read_mnist("mnist_train.csv")
     train_features = train[:, 1:]
 
-    # scaling data
+    # Scaling data
     ss = StandardScaler()
     ss.fit(train_features)
 
-    # dataset loaders
+    # Dataset loaders
     train_data = CustomMnistDataset("mnist_train.csv", scaler=ss)
     train_loader = DataLoader(train_data, batch_size=64, shuffle=True)
     valid_data = CustomMnistDataset("mnist_valid.csv", scaler=ss)
@@ -43,14 +40,14 @@ def train_test_q3():
     test_data = CustomMnistDataset("mnist_test.csv", scaler=ss)
     test_loader = DataLoader(test_data, batch_size=64, shuffle=True)
 
+    # Initialize FeedForward model, loss function, optimizer, and lists to track metrics
     device = "cpu"
     num_epochs = 1100
     learning_rate = 0.005
     lr_decay_factor = 0.2
     lr_decay_step = 250
     regularization = 0.001
-    orginal_learning_rate = learning_rate
-
+    original_learning_rate = learning_rate
     loss_func = nn.CrossEntropyLoss()
     if regularization != 0:
         ff = FeedForward().to(device)
@@ -66,26 +63,23 @@ def train_test_q3():
     val_accuracies = []
 
     for epoch in range(num_epochs):
-        # fetch train and valid losses
+        # Train the network and validate
         train_loss, train_accuracy = train_network(
             train_loader, ff, loss_func, optimizer, device
         )
         train_losses.append(train_loss)
         train_accuracies.append(train_accuracy)
-
         val_loss, val_accuracy = test_network(valid_loader, ff, loss_func, device)
         val_losses.append(val_loss)
         val_accuracies.append(val_accuracy)
 
-        # print loss
+        # Print and update learning rate decay
         if (epoch + 1) % PRINT_INTERVAL == 0:
             print(f"---Epoch [{epoch + 1}/{num_epochs}]---")
             print(f"Train Loss: {train_loss:.6f}")
             print(f"Valid Loss: {val_loss:.6f}")
             print(f"Train Accuracy: {train_accuracy:.6f}")
             print(f"Valid Accuracy: {val_accuracy:.6f}\n")
-
-        # Learning rate decay schedule
         if (epoch + 1) % lr_decay_step == 0:
             learning_rate = max(
                 optimizer.param_groups[0]["lr"] * lr_decay_factor,
@@ -94,12 +88,13 @@ def train_test_q3():
             optimizer.param_groups[0]["lr"] = learning_rate
             print(f"New LR is: {optimizer.param_groups[0]['lr']:.8f}")
 
+    # Plot learning and accuracy curves
     plot_learning_curve(
         train_losses,
         val_losses,
         [
             num_epochs,
-            orginal_learning_rate,
+            original_learning_rate,
             lr_decay_factor,
             lr_decay_step,
             regularization,
@@ -111,7 +106,7 @@ def train_test_q3():
         val_accuracies,
         [
             num_epochs,
-            orginal_learning_rate,
+            original_learning_rate,
             lr_decay_factor,
             lr_decay_step,
             regularization,
