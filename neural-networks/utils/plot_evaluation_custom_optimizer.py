@@ -5,21 +5,19 @@ Utility functions for plotting learning and accuracy curves.
 import matplotlib.pyplot as plt
 
 
-def plot_learning_curve(train_losses, valid_losses, hyperparams, base_path=None):
+def plot_learning_curve(
+    train_losses_custom_optimizer,
+    train_losses_optimizer,
+    valid_losses,
+    hyperparams,
+    base_path=None,
+):
     """
     Plot the learning curve showing training and validation losses across epochs.
-
-    Parameters:
-    - train_losses (list): Training loss values for each epoch.
-    - valid_losses (list): Validation loss values for each epoch.
-    - hyperparams (list): List containing hyperparameters used for the plot title.
-    - base_path (str): Base path to save the plot as an image.
-
-    Returns:
-    - None
     """
     plt.figure(figsize=(10, 6), dpi=110)
-    plt.plot(train_losses, label="Training Loss")
+    plt.plot(train_losses_custom_optimizer, label="Training Loss (Custom optimizer)")
+    plt.plot(train_losses_optimizer, label="Training Loss (Optimizer)")
     plt.plot(valid_losses, label="Validation Loss")
     plt.title("Learning Curve")
     plt.xlabel("Epochs")
@@ -40,22 +38,20 @@ def plot_learning_curve(train_losses, valid_losses, hyperparams, base_path=None)
 
 
 def plot_accuracy_curve(
-    train_accuracies, valid_accuracies, hyperparams, base_path=None
+    train_accuracies_custom_optimizer,
+    train_accuracies_optimizer,
+    valid_accuracies,
+    hyperparams,
+    base_path=None,
 ):
     """
     Plot the accuracy curve showing training and validation accuracies across epochs.
-
-    Parameters:
-    - train_accuracies (list): Training accuracy values for each epoch.
-    - valid_accuracies (list): Validation accuracy values for each epoch.
-    - hyperparams (list): List containing hyperparameters used for the plot title.
-    - base_path (str): Base path to save the plot as an image.
-
-    Returns:
-    - None
     """
     plt.figure(figsize=(10, 6), dpi=110)
-    plt.plot(train_accuracies, label="Training Accuracy")
+    plt.plot(
+        train_accuracies_custom_optimizer, label="Training Accuracy (Custom Optimizer)"
+    )
+    plt.plot(train_accuracies_optimizer, label="Training Accuracy (Optimizer)")
     plt.plot(valid_accuracies, label="Validation Accuracy")
     plt.title("Accuracy Curve")
     plt.xlabel("Epochs")

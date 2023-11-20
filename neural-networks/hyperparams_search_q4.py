@@ -3,17 +3,21 @@ Module for hyperparameter search and evaluation.
 """
 import csv
 
+import torch
 from torch import nn
 from torch.utils.data import DataLoader
 
 from data_loaders.insurability_data import CustomInsurabilityDataset
 from data_loaders.read_data import read_insurability
 from data_loaders.standard_scaler import StandardScaler
-from networks.insurability_q4 import FeedForward
+from networks.insurability_q4 import CustomSGD, FeedForward
 from networks.test_network import test_network
-from networks.train_network_no_optimizer import train_network
+from networks.train_network import train_network
 from utils.generate_hyperparams import get_hyperparams_q4
-from utils.plot_evaluation_no_optimizer import plot_accuracy_curve, plot_learning_curve
+from utils.plot_evaluation_custom_optimizer import (
+    plot_accuracy_curve,
+    plot_learning_curve,
+)
 
 PRINT_INTERVAL = 250
 BASE_PATH = "hyperparams/question_4/"
@@ -70,49 +74,106 @@ def hyperparams_search_q4():
     results = []
 
     for hyperparams in hyperparams_list:
-        train_losses = []
-        train_accuracies = []
+        train_losses_custom_optimizer = []
+        train_accuracies_custom_optimizer = []
+        train_losses_optimizer = []
+        train_accuracies_optimizer = []
         val_losses = []
         val_accuracies = []
         num_epochs, learning_rate = hyperparams
-        orginal_learning_rate = learning_rate
 
-        ff = FeedForward().to(device)
+        ff_custom_optimizer = FeedForward().to(device)
+        ff_optimizer = FeedForward().to(device)
+
+        optimizer = torch.optim.SGD(
+            ff_optimizer.parameters(),
+            lr=learning_rate,
+        )
+        custom_optimizer = CustomSGD(ff_custom_optimizer.parameters(), lr=learning_rate)
         loss_func = nn.CrossEntropyLoss()
 
         for epoch in range(num_epochs):
-            # fetch train and valid losses
-            train_loss, train_accuracy = train_network(
-                train_loader, ff, loss_func, device, learning_rate
-            )
-            train_losses.append(train_loss)
-            train_accuracies.append(train_accuracy)
+            # print gradients before
+            if (epoch + 1) % PRINT_INTERVAL == 0:
+                print("---Before---")
+                print("Custom Optimizer Gradients:")
+                for name, param in ff_custom_optimizer.named_parameters():
+                    if param.grad is not None and name != "bias":
+                        print(f"Parameter: {name}, Gradient: {param.grad}")
 
-            val_loss, val_accuracy = test_network(valid_loader, ff, loss_func, device)
+                print("Optimizer Gradients:")
+                for name, param in ff_optimizer.named_parameters():
+                    if param.grad is not None and name != "bias":
+                        print(f"Parameter: {name}, Gradient: {param.grad}\n")
+
+            # fetch train and valid losses
+            (
+                train_loss_custom_optimizer,
+                train_accuracy_custom_optimizer,
+            ) = train_network(
+                train_loader, ff_custom_optimizer, loss_func, custom_optimizer, device
+            )
+            train_losses_custom_optimizer.append(train_loss_custom_optimizer)
+            train_accuracies_custom_optimizer.append(train_accuracy_custom_optimizer)
+
+            train_loss_optimizer, train_accuracy_optimizer = train_network(
+                train_loader, ff_optimizer, loss_func, optimizer, device
+            )
+            train_losses_optimizer.append(train_loss_optimizer)
+            train_accuracies_optimizer.append(train_accuracy_optimizer)
+
+            val_loss, val_accuracy = test_network(
+                valid_loader, ff_custom_optimizer, loss_func, device
+            )
             val_losses.append(val_loss)
             val_accuracies.append(val_accuracy)
 
-            # print loss
+            # print loss and gradients after
             if (epoch + 1) % PRINT_INTERVAL == 0:
+                print("---After---")
+                print("Custom Optimizer Gradients:")
+                for name, param in ff_custom_optimizer.named_parameters():
+                    if param.grad is not None and name != "bias":
+                        print(f"Parameter: {name}, Gradient: {param.grad}")
+
+                print("Optimizer Gradients:")
+                for name, param in ff_optimizer.named_parameters():
+                    if param.grad is not None and name != "bias":
+                        print(f"Parameter: {name}, Gradient: {param.grad}\n")
+
                 print(f"---Epoch [{epoch + 1}/{num_epochs}]---")
-                print(f"Train Loss: {train_loss:.6f}")
+                print(
+                    f"Train Loss (custom Optimizer): {train_loss_custom_optimizer:.6f}"
+                )
+                print(f"Train Loss (Optimizer): {train_loss_optimizer:.6f}")
                 print(f"Valid Loss: {val_loss:.6f}")
-                print(f"Train Accuracy: {train_accuracy:.6f}")
+                print(
+                    f"Train Accuracy (custom Optimizer): {train_accuracy_custom_optimizer:.6f}"
+                )
+                print(f"Train Accuracy (Optimizer): {train_accuracy_optimizer:.6f}")
                 print(f"Valid Accuracy: {val_accuracy:.6f}\n")
 
         results.append(
-            list(hyperparams) + [train_loss, val_loss, train_accuracy, val_accuracy]
+            list(hyperparams)
+            + [
+                train_loss_custom_optimizer,
+                val_loss,
+                train_accuracy_custom_optimizer,
+                val_accuracy,
+            ]
         )
         plot_learning_curve(
-            train_losses,
+            train_losses_custom_optimizer,
+            train_losses_optimizer,
             val_losses,
-            [num_epochs, orginal_learning_rate],
+            [num_epochs, learning_rate],
             BASE_PATH,
         )
         plot_accuracy_curve(
-            train_accuracies,
+            train_accuracies_custom_optimizer,
+            train_accuracies_optimizer,
             val_accuracies,
-            [num_epochs, orginal_learning_rate],
+            [num_epochs, learning_rate],
             BASE_PATH,
         )
     save_to_csv(results)

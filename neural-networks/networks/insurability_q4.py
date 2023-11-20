@@ -18,3 +18,21 @@ class FeedForward(nn.Module):
         x = self.linear_out(x)
         x = self.softmax(x)
         return x
+
+
+class CustomSGD:
+    def __init__(self, parameters, lr=0.001):
+        self.parameters = list(parameters)
+        self.lr = lr
+
+    def zero_grad(self):
+        for param in self.parameters:
+            if param.grad is not None:
+                param.grad.detach_()
+                param.grad.zero_()
+
+    def step(self):
+        with torch.no_grad():
+            for param in self.parameters:
+                if param.grad is not None:
+                    param -= self.lr * param.grad
