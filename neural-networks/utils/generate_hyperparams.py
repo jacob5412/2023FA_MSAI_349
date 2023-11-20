@@ -55,7 +55,7 @@ def get_hyperparams_q3():
 
 
 def get_hyperparams_q4():
-    num_epochs_range = [1250, 1600, 2000]
+    num_epochs_range = [1800, 2400, 3800]
     initial_lr_range = [0.001, 0.005, 0.01]
 
     all_combinations = list(
