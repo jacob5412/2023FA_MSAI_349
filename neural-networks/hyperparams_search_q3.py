@@ -40,6 +40,8 @@ def save_to_csv(data):
         "regularization",
         "final_train_loss",
         "final_valid_loss",
+        "final_train_acc",
+        "final_valid_acc",
     ]
 
     with open(BASE_PATH + "results.csv", "w", newline="") as file:
@@ -100,12 +102,12 @@ def hyperparams_search_q3():
         for epoch in range(num_epochs):
             # fetch train and valid losses
             train_loss, train_accuracy = train_network(
-                train_loader, ff, loss_func, optimizer
+                train_loader, ff, loss_func, optimizer, device
             )
             train_losses.append(train_loss)
             train_accuracies.append(train_accuracy)
 
-            val_loss, val_accuracy = test_network(valid_loader, ff, loss_func)
+            val_loss, val_accuracy = test_network(valid_loader, ff, loss_func, device)
             val_losses.append(val_loss)
             val_accuracies.append(val_accuracy)
 
@@ -124,7 +126,9 @@ def hyperparams_search_q3():
                     MINIMUM_LEARNING_RATE,
                 )
                 optimizer.param_groups[0]["lr"] = learning_rate
-        results.append(list(hyperparams) + [train_loss, val_loss])
+        results.append(
+            list(hyperparams) + [train_loss, val_loss, train_accuracy, val_accuracy]
+        )
         plot_learning_curve(
             train_losses,
             val_losses,

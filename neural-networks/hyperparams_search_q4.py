@@ -3,22 +3,21 @@ Module for hyperparameter search and evaluation.
 """
 import csv
 
-import torch
 from torch import nn
 from torch.utils.data import DataLoader
 
 from data_loaders.insurability_data import CustomInsurabilityDataset
 from data_loaders.read_data import read_insurability
 from data_loaders.standard_scaler import StandardScaler
-from networks.insurability_q4 import FeedForward, CustomSGDOptimizer
+from networks.insurability_q4 import FeedForward
 from networks.test_network import test_network
-from networks.train_network import train_network
-from utils.generate_hyperparams import get_hyperparams_q1
+from networks.train_network_no_optimizer import train_network
+from utils.generate_hyperparams import get_hyperparams_q4
 from utils.plot_evaluation import plot_accuracy_curve, plot_learning_curve
 
 MINIMUM_LEARNING_RATE = 1e-5
 PRINT_INTERVAL = 150
-BASE_PATH = "hyperparams/question_1/"
+BASE_PATH = "hyperparams/question_4/"
 
 
 def save_to_csv(data):
@@ -38,6 +37,8 @@ def save_to_csv(data):
         "lr_decay_step",
         "final_train_loss",
         "final_valid_loss",
+        "final_train_acc",
+        "final_valid_acc",
     ]
 
     with open(BASE_PATH + "results.csv", "w", newline="") as file:
@@ -46,7 +47,7 @@ def save_to_csv(data):
         writer.writerows(data)
 
 
-def hyperparams_search_q1():
+def hyperparams_search_q4():
     """
     Perform hyperparameter search for a neural network model on insurability data.
 
@@ -67,7 +68,7 @@ def hyperparams_search_q1():
     valid_data = CustomInsurabilityDataset("three_valid.csv", scaler=ss)
     valid_loader = DataLoader(valid_data, batch_size=64, shuffle=True)
 
-    hyperparams_list = get_hyperparams_q1()
+    hyperparams_list = get_hyperparams_q4()
     device = "cpu"
     results = []
 
@@ -81,17 +82,16 @@ def hyperparams_search_q1():
 
         ff = FeedForward().to(device)
         loss_func = nn.CrossEntropyLoss()
-        optimizer = CustomSGDOptimizer(ff.parameters(), lr=learning_rate)
 
         for epoch in range(num_epochs):
             # fetch train and valid losses
             train_loss, train_accuracy = train_network(
-                train_loader, ff, loss_func, optimizer
+                train_loader, ff, loss_func, device, learning_rate
             )
             train_losses.append(train_loss)
             train_accuracies.append(train_accuracy)
 
-            val_loss, val_accuracy = test_network(valid_loader, ff, loss_func)
+            val_loss, val_accuracy = test_network(valid_loader, ff, loss_func, device)
             val_losses.append(val_loss)
             val_accuracies.append(val_accuracy)
 
@@ -105,12 +105,14 @@ def hyperparams_search_q1():
 
             # Learning rate decay schedule
             if (epoch + 1) % lr_decay_step == 0:
-                learning_rate = max(
-                    optimizer.lr * lr_decay_factor,
+                new_learning_rate = max(
+                    learning_rate * lr_decay_factor,
                     MINIMUM_LEARNING_RATE,
                 )
-                optimizer.lr = learning_rate
-        results.append(list(hyperparams) + [train_loss, val_loss])
+                learning_rate = new_learning_rate
+        results.append(
+            list(hyperparams) + [train_loss, val_loss, train_accuracy, val_accuracy]
+        )
         plot_learning_curve(
             train_losses,
             val_losses,
@@ -127,4 +129,4 @@ def hyperparams_search_q1():
 
 
 if __name__ == "__main__":
-    hyperparams_search_q1()
+    hyperparams_search_q4()
