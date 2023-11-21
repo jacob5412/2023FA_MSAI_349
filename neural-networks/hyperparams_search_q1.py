@@ -24,12 +24,6 @@ BASE_PATH = "hyperparams/question_1/"
 def save_to_csv(data):
     """
     Save the results data to a CSV file.
-
-    Parameters:
-    - data (list): List of results data to be saved.
-
-    Returns:
-    - None
     """
     headers = [
         "num_epochs",
@@ -51,19 +45,16 @@ def save_to_csv(data):
 def hyperparams_search_q1():
     """
     Perform hyperparameter search for a neural network model on insurability data.
-
-    Returns:
-    - None
     """
-    # load training data
+    # Load training data
     train = read_insurability("data/three_train.csv")
     train_features = train[:, 1:]
 
-    # scaling data
+    # Scaling data
     ss = StandardScaler()
     ss.fit(train_features)
 
-    # dataset loaders
+    # Dataset loaders
     train_data = CustomInsurabilityDataset("data/three_train.csv", scaler=ss)
     train_loader = DataLoader(train_data, batch_size=1)
     valid_data = CustomInsurabilityDataset("data/three_valid.csv", scaler=ss)
@@ -86,7 +77,7 @@ def hyperparams_search_q1():
         optimizer = torch.optim.SGD(ff.parameters(), lr=learning_rate)
 
         for epoch in range(num_epochs):
-            # fetch train and valid losses
+            # Fetch train and valid losses
             train_loss, train_accuracy = train_network(
                 train_loader, ff, loss_func, optimizer, device
             )
@@ -97,7 +88,7 @@ def hyperparams_search_q1():
             val_losses.append(val_loss)
             val_accuracies.append(val_accuracy)
 
-            # print loss
+            # Print loss
             if (epoch + 1) % PRINT_INTERVAL == 0:
                 print(f"---Epoch [{epoch + 1}/{num_epochs}]---")
                 print(f"Train Loss: {train_loss:.6f}")

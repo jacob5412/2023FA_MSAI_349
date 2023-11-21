@@ -24,12 +24,6 @@ BASE_PATH = "hyperparams/question_2/"
 def save_to_csv(data):
     """
     Save the results data to a CSV file.
-
-    Parameters:
-    - data (list): List of results data to be saved.
-
-    Returns:
-    - None
     """
     headers = [
         "num_epochs",
@@ -51,19 +45,16 @@ def save_to_csv(data):
 def hyperparams_search_q2():
     """
     Perform hyperparameter search for a neural network model on mnist data.
-
-    Returns:
-    - None
     """
-    # load training data
+    # Load training data
     train = read_mnist("data/mnist_train.csv")
     train_features = train[:, 1:]
 
-    # scaling data
+    # Scaling data
     ss = StandardScaler()
     ss.fit(train_features)
 
-    # dataset loaders
+    # Dataset loaders
     train_data = CustomMnistDataset("data/mnist_train.csv", scaler=ss)
     train_loader = DataLoader(train_data, batch_size=64, shuffle=True)
     valid_data = CustomMnistDataset("data/mnist_valid.csv", scaler=ss)
@@ -86,7 +77,7 @@ def hyperparams_search_q2():
         optimizer = torch.optim.Adam(ff.parameters(), lr=learning_rate)
 
         for epoch in range(num_epochs):
-            # fetch train and valid losses
+            # Fetch train and valid losses
             train_loss, train_accuracy = train_network(
                 train_loader, ff, loss_func, optimizer, device
             )
@@ -97,7 +88,7 @@ def hyperparams_search_q2():
             val_losses.append(val_loss)
             val_accuracies.append(val_accuracy)
 
-            # print loss
+            # Print loss
             if (epoch + 1) % PRINT_INTERVAL == 0:
                 print(f"---Epoch [{epoch + 1}/{num_epochs}]---")
                 print(f"Train Loss: {train_loss:.6f}")

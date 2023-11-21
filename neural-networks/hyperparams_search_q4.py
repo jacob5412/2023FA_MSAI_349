@@ -26,12 +26,6 @@ BASE_PATH = "hyperparams/question_4/"
 def save_to_csv(data):
     """
     Save the results data to a CSV file.
-
-    Parameters:
-    - data (list): List of results data to be saved.
-
-    Returns:
-    - None
     """
     headers = [
         "num_epochs",
@@ -51,19 +45,16 @@ def save_to_csv(data):
 def hyperparams_search_q4():
     """
     Perform hyperparameter search for a neural network model on insurability data.
-
-    Returns:
-    - None
     """
-    # load training data
+    # Load training data
     train = read_insurability("data/three_train.csv")
     train_features = train[:, 1:]
 
-    # scaling data
+    # Scaling data
     ss = StandardScaler()
     ss.fit(train_features)
 
-    # dataset loaders
+    # Dataset loaders
     train_data = CustomInsurabilityDataset("data/three_train.csv", scaler=ss)
     train_loader = DataLoader(train_data, batch_size=64, shuffle=True)
     valid_data = CustomInsurabilityDataset("data/three_valid.csv", scaler=ss)
@@ -93,7 +84,7 @@ def hyperparams_search_q4():
         loss_func = nn.CrossEntropyLoss()
 
         for epoch in range(num_epochs):
-            # print gradients before
+            # Print gradients before
             if (epoch + 1) % PRINT_INTERVAL == 0:
                 print("---Before---")
                 print("Custom Optimizer Gradients:")
@@ -106,7 +97,7 @@ def hyperparams_search_q4():
                     if param.grad is not None and name != "bias":
                         print(f"Parameter: {name}, Gradient: {param.grad}\n")
 
-            # fetch train and valid losses
+            # Fetch train and valid losses
             (
                 train_loss_custom_optimizer,
                 train_accuracy_custom_optimizer,
@@ -128,7 +119,7 @@ def hyperparams_search_q4():
             val_losses.append(val_loss)
             val_accuracies.append(val_accuracy)
 
-            # print loss and gradients after
+            # Print loss and gradients after
             if (epoch + 1) % PRINT_INTERVAL == 0:
                 print("---After---")
                 print("Custom Optimizer Gradients:")
