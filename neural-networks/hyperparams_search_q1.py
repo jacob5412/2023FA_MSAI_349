@@ -56,9 +56,9 @@ def hyperparams_search_q1():
 
     # Dataset loaders
     train_data = CustomInsurabilityDataset("data/three_train.csv", scaler=ss)
-    train_loader = DataLoader(train_data, batch_size=1)
+    train_loader = DataLoader(train_data, batch_size=1, shuffle=True)
     valid_data = CustomInsurabilityDataset("data/three_valid.csv", scaler=ss)
-    valid_loader = DataLoader(valid_data, batch_size=1)
+    valid_loader = DataLoader(valid_data, batch_size=1, shuffle=True)
 
     hyperparams_list = get_hyperparams_q1()
     device = "cpu"
