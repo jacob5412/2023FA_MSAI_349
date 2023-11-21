@@ -25,7 +25,7 @@ def train_test_q3():
     Perform hyperparameter search for a neural network model on MNIST data.
     """
     # Load training data
-    train = read_mnist("mnist_train.csv")
+    train = read_mnist("data/mnist_train.csv")
     train_features = train[:, 1:]
 
     # Scaling data
@@ -33,11 +33,11 @@ def train_test_q3():
     ss.fit(train_features)
 
     # Dataset loaders
-    train_data = CustomMnistDataset("mnist_train.csv", scaler=ss)
+    train_data = CustomMnistDataset("data/mnist_train.csv", scaler=ss)
     train_loader = DataLoader(train_data, batch_size=64, shuffle=True)
-    valid_data = CustomMnistDataset("mnist_valid.csv", scaler=ss)
+    valid_data = CustomMnistDataset("data/mnist_valid.csv", scaler=ss)
     valid_loader = DataLoader(valid_data, batch_size=64, shuffle=True)
-    test_data = CustomMnistDataset("mnist_test.csv", scaler=ss)
+    test_data = CustomMnistDataset("data/mnist_test.csv", scaler=ss)
     test_loader = DataLoader(test_data, batch_size=64, shuffle=True)
 
     # Initialize FeedForward model, loss function, optimizer, and lists to track metrics

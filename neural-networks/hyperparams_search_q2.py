@@ -56,7 +56,7 @@ def hyperparams_search_q2():
     - None
     """
     # load training data
-    train = read_mnist("mnist_train.csv")
+    train = read_mnist("data/mnist_train.csv")
     train_features = train[:, 1:]
 
     # scaling data
@@ -64,9 +64,9 @@ def hyperparams_search_q2():
     ss.fit(train_features)
 
     # dataset loaders
-    train_data = CustomMnistDataset("mnist_train.csv", scaler=ss)
+    train_data = CustomMnistDataset("data/mnist_train.csv", scaler=ss)
     train_loader = DataLoader(train_data, batch_size=64, shuffle=True)
-    valid_data = CustomMnistDataset("mnist_valid.csv", scaler=ss)
+    valid_data = CustomMnistDataset("data/mnist_valid.csv", scaler=ss)
     valid_loader = DataLoader(valid_data, batch_size=64, shuffle=True)
 
     hyperparams_list = get_hyperparams_q2()

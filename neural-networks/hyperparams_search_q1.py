@@ -56,7 +56,7 @@ def hyperparams_search_q1():
     - None
     """
     # load training data
-    train = read_insurability("three_train.csv")
+    train = read_insurability("data/three_train.csv")
     train_features = train[:, 1:]
 
     # scaling data
@@ -64,9 +64,9 @@ def hyperparams_search_q1():
     ss.fit(train_features)
 
     # dataset loaders
-    train_data = CustomInsurabilityDataset("three_train.csv", scaler=ss)
+    train_data = CustomInsurabilityDataset("data/three_train.csv", scaler=ss)
     train_loader = DataLoader(train_data, batch_size=1)
-    valid_data = CustomInsurabilityDataset("three_valid.csv", scaler=ss)
+    valid_data = CustomInsurabilityDataset("data/three_valid.csv", scaler=ss)
     valid_loader = DataLoader(valid_data, batch_size=1)
 
     hyperparams_list = get_hyperparams_q1()

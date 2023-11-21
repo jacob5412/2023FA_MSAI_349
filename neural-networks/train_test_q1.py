@@ -24,7 +24,7 @@ def train_and_test_q1():
     Train and test a FeedForward network on insurability data.
     """
     # Load training data
-    train = read_insurability("three_train.csv")
+    train = read_insurability("data/three_train.csv")
     train_features = train[:, 1:]
 
     # Scaling data
@@ -32,11 +32,11 @@ def train_and_test_q1():
     ss.fit(train_features)
 
     # Dataset loaders
-    train_data = CustomInsurabilityDataset("three_train.csv", scaler=ss)
+    train_data = CustomInsurabilityDataset("data/three_train.csv", scaler=ss)
     train_loader = DataLoader(train_data, batch_size=1)
-    valid_data = CustomInsurabilityDataset("three_valid.csv", scaler=ss)
+    valid_data = CustomInsurabilityDataset("data/three_valid.csv", scaler=ss)
     valid_loader = DataLoader(valid_data, batch_size=1)
-    test_data = CustomInsurabilityDataset("three_test.csv", scaler=ss)
+    test_data = CustomInsurabilityDataset("data/three_test.csv", scaler=ss)
     test_loader = DataLoader(test_data, batch_size=1)
 
     # Define parameters for training
