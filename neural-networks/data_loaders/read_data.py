@@ -1,9 +1,9 @@
 import numpy as np
 
 
-def read_mnist(file_name):
+def read_mnist(file_path):
     data_set = []
-    with open(file_name, "rt") as f:
+    with open(file_path, "rt") as f:
         for line in f:
             line = line.replace("\n", "")
             tokens = line.split(",")
@@ -14,27 +14,10 @@ def read_mnist(file_name):
     return np.array(data_set)
 
 
-def show_mnist(file_name, mode):
-    data_set = read_mnist(file_name)
-    for obs in range(len(data_set)):
-        for idx in range(784):
-            if mode == "pixels":
-                if data_set[obs][1][idx] == "0":
-                    print(" ", end="")
-                else:
-                    print("*", end="")
-            else:
-                print("%4s " % data_set[obs][1][idx], end="")
-            if (idx % 28) == 27:
-                print(" ")
-        print("LABEL: %s" % data_set[obs][0], end="")
-        print(" ")
-
-
-def read_insurability(file_name):
+def read_insurability(file_path):
     count = 0
     data = []
-    with open(file_name, "rt") as f:
+    with open(file_path, "rt") as f:
         for line in f:
             if count > 0:
                 line = line.replace("\n", "")
@@ -49,6 +32,6 @@ def read_insurability(file_name):
                         cls = 1
                     else:
                         cls = 2
-                    data.append([[cls], [x1, x2, x3]])
+                    data.append(np.array([cls, x1, x2, x3]))
             count = count + 1
-    return data
+    return np.array(data)
