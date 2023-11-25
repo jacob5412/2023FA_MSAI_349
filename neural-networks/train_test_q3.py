@@ -128,7 +128,6 @@ def train_test_q3():
     print("---Test Results---")
     print(f"Loss: {test_loss:.6f}")
     print(f"Accuracy: {test_accuracy:.6f}")
-    print(f"Loss: {test_loss:.6f}")
     print(f"Precision: {precision:.6f}")
     print(f"Recall: {recall:.6f}")
     print(f"F1-Score: {f1:.6f}")

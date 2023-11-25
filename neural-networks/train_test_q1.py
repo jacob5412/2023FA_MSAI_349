@@ -41,10 +41,10 @@ def train_and_test_q1():
 
     # Define parameters for training
     device = "cpu"
-    num_epochs = 1000
+    num_epochs = 200
     learning_rate = 0.01
-    lr_decay_factor = 0.1
-    lr_decay_step = 350
+    lr_decay_factor = 1
+    lr_decay_step = 250
     original_learning_rate = learning_rate
 
     # Initialize FeedForward model, loss function, optimizer, and lists to track metrics
@@ -110,7 +110,6 @@ def train_and_test_q1():
     print("---Test Results---")
     print(f"Loss: {test_loss:.6f}")
     print(f"Accuracy: {test_accuracy:.6f}")
-    print(f"Loss: {test_loss:.6f}")
     print(f"Precision: {precision:.6f}")
     print(f"Recall: {recall:.6f}")
     print(f"F1-Score: {f1:.6f}")

@@ -41,7 +41,7 @@ def train_and_test_q2():
 
     # Define parameters for training
     device = "cpu"
-    num_epochs = 1100
+    num_epochs = 200
     learning_rate = 0.01
     lr_decay_factor = 0.2
     lr_decay_step = 100
@@ -110,7 +110,6 @@ def train_and_test_q2():
     print("---Test Results---")
     print(f"Loss: {test_loss:.6f}")
     print(f"Accuracy: {test_accuracy:.6f}")
-    print(f"Loss: {test_loss:.6f}")
     print(f"Precision: {precision:.6f}")
     print(f"Recall: {recall:.6f}")
     print(f"F1-Score: {f1:.6f}")
