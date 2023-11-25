@@ -9,7 +9,7 @@ from data_loaders.insurability_data import CustomInsurabilityDataset
 from data_loaders.read_data import read_insurability
 from data_loaders.standard_scaler import StandardScaler
 from networks.evaluate_network import evaluate_network
-from networks.insurability_q4 import CustomSGD, FeedForward
+from networks.insurability_q4_v1 import CustomSGD, FeedForward
 from networks.test_network import test_network
 from networks.train_network import train_network
 from utils.plot_evaluation_custom_optimizer import (
@@ -18,7 +18,7 @@ from utils.plot_evaluation_custom_optimizer import (
 )
 
 PRINT_INTERVAL = 250
-BASE_PATH = "results/question_4/"
+BASE_PATH = "results/question_4_v1/"
 
 
 def train_and_test_q4():
@@ -124,7 +124,6 @@ def train_and_test_q4():
     print("---Test Results---")
     print(f"Loss: {test_loss:.6f}")
     print(f"Accuracy: {test_accuracy:.6f}")
-    print(f"Loss: {test_loss:.6f}")
     print(f"Precision: {precision:.6f}")
     print(f"Recall: {recall:.6f}")
     print(f"F1-Score: {f1:.6f}")

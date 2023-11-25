@@ -10,7 +10,7 @@ from torch.utils.data import DataLoader
 from data_loaders.insurability_data import CustomInsurabilityDataset
 from data_loaders.read_data import read_insurability
 from data_loaders.standard_scaler import StandardScaler
-from networks.insurability_q4 import CustomSGD, FeedForward
+from networks.insurability_q4_v2 import CustomSGD, FeedForward
 from networks.test_network import test_network
 from networks.train_network import train_network
 from utils.generate_hyperparams import get_hyperparams_q4
@@ -20,7 +20,7 @@ from utils.plot_evaluation_custom_optimizer import (
 )
 
 PRINT_INTERVAL = 250
-BASE_PATH = "hyperparams/question_4/"
+BASE_PATH = "hyperparams/question_4_v2/"
 
 
 def save_to_csv(data):
